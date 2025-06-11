@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiBriefcase } from "react-icons/fi";
+import InvestorAlerts from "./Home-Component/InvestorAlerts"; 
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -50,6 +51,7 @@ const Navbar = () => {
   return (
     <nav className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 text-white shadow-xl sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+        <InvestorAlerts/>
         <motion.div
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
