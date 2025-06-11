@@ -7,7 +7,7 @@ const InvestorAlerts = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   // Generate random investor data with USD or EUR
-  const generateInvestor = () => {
+  const generateAlert = () => {
     const firstName = faker.person.firstName();
     const lastName = faker.person.lastName();
     
@@ -27,6 +27,9 @@ const InvestorAlerts = () => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const growth = faker.finance.amount(5, 45, 1) + '%';
     
+    // Randomly decide if it's an investment or withdrawal (40% withdrawal chance)
+    const isWithdrawal = Math.random() < 0.4;
+    
     return {
       name: `${firstName} ${lastName}`,
       amount: `${symbol}${formattedAmount}`,
@@ -34,14 +37,15 @@ const InvestorAlerts = () => {
       time: `${time} Today`,
       growth: growth,
       location: `${faker.location.city()}, ${currency === 'USD' ? 'USA' : 'Germany'}`,
-      avatar: `https://i.pravatar.cc/100?u=${firstName}${lastName}`
+      avatar: `https://i.pravatar.cc/100?u=${firstName}${lastName}`,
+      type: isWithdrawal ? 'withdrawal' : 'investment'
     };
   };
 
   useEffect(() => {
     // Initial delay
     const initialTimeout = setTimeout(() => {
-      setCurrentAlert(generateInvestor());
+      setCurrentAlert(generateAlert());
       setIsVisible(true);
     }, 3000);
 
@@ -49,7 +53,7 @@ const InvestorAlerts = () => {
       setIsVisible(false);
       
       setTimeout(() => {
-        setCurrentAlert(generateInvestor());
+        setCurrentAlert(generateAlert());
         setIsVisible(true);
       }, 500);
     }, 5000 + Math.random() * 2000);
@@ -62,18 +66,36 @@ const InvestorAlerts = () => {
 
   if (!currentAlert) return null;
 
+  // Determine styling based on alert type
+  const isWithdrawal = currentAlert.type === 'withdrawal';
+  const headerColor = isWithdrawal ? 'text-red-400' : 'text-green-400';
+  const headerText = isWithdrawal ? 'WITHDRAWAL PROCESSED' : 'NEW INVESTMENT';
+  const borderColor = isWithdrawal ? 'border-red-700' : 'border-green-700';
+  const iconBg = isWithdrawal ? 'bg-red-500' : 'bg-green-500';
+  const amountColor = isWithdrawal ? 'text-red-300' : 'text-white';
+  
+  const icon = isWithdrawal ? (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+    </svg>
+  ) : (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+    </svg>
+  );
+
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          key={currentAlert.name + currentAlert.time}
+          key={currentAlert.name + currentAlert.time + currentAlert.type}
           className="fixed bottom-8 right-8 z-50"
           initial={{ opacity: 0, y: 50, scale: 0.8 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.8 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-4 border border-red-700/50 shadow-2xl shadow-red-900/30 backdrop-blur-sm w-80">
+          <div className={`bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl p-4 border ${borderColor} shadow-2xl shadow-gray-900/30 backdrop-blur-sm w-80`}>
             <div className="flex justify-between items-start">
               <div className="flex items-center">
                 <div className="relative mr-3">
@@ -82,14 +104,12 @@ const InvestorAlerts = () => {
                     alt={currentAlert.name}
                     className="w-10 h-10 rounded-full border-2 border-red-600"
                   />
-                  <div className="absolute -bottom-1 -right-1 bg-green-500 rounded-full p-1 border-2 border-gray-800">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
+                  <div className={`absolute -bottom-1 -right-1 ${iconBg} rounded-full p-1 border-2 border-gray-800`}>
+                    {icon}
                   </div>
                 </div>
                 <div>
-                  <div className="text-green-400 font-bold text-sm">NEW INVESTMENT</div>
+                  <div className={`${headerColor} font-bold text-sm`}>{headerText}</div>
                   <div className="text-white font-bold">{currentAlert.name}</div>
                   <div className="text-xs text-gray-400">{currentAlert.location}</div>
                 </div>
@@ -105,13 +125,19 @@ const InvestorAlerts = () => {
             
             <div className="mt-3 flex justify-between items-end">
               <div>
-                <div className="text-gray-400 text-xs">Investment Amount</div>
-                <div className="text-xl font-bold text-white">{currentAlert.amount}</div>
+                <div className="text-gray-400 text-xs">
+                  {isWithdrawal ? 'Withdrawal Amount' : 'Investment Amount'}
+                </div>
+                <div className={`text-xl font-bold ${amountColor}`}>
+                  {isWithdrawal ? '-' : ''}{currentAlert.amount}
+                </div>
               </div>
-              <div className="text-right">
-                <div className="text-gray-400 text-xs">Portfolio Growth</div>
-                <div className="text-green-400 font-bold">+{currentAlert.growth}</div>
-              </div>
+              {!isWithdrawal && (
+                <div className="text-right">
+                  <div className="text-gray-400 text-xs">Portfolio Growth</div>
+                  <div className="text-green-400 font-bold">+{currentAlert.growth}</div>
+                </div>
+              )}
             </div>
             
             <div className="mt-3 flex justify-between items-center">
