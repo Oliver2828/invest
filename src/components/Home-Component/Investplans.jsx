@@ -1,6 +1,6 @@
 // === src/components/Investplans.jsx ===
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, animate, useInView } from 'framer-motion';
 import {
   FiArrowUpRight,
   FiCheck,
@@ -197,65 +197,69 @@ const Investplans = () => {
           />
         </div>
 
-        {/* Stats Overview */}
-<motion.div
-  className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
-  initial="hidden"
-  whileInView="visible"
-  viewport={{ once: true, amount: 0.3 }}
-  variants={container}  // reuse your existing container variant
->
-  {[
-    { icon: <FiTrendingUp />, value: "12.4%", label: "Avg Return" },
-    { icon: <FiShield />,      value: "98%",   label: "Retention" },
-    { icon: <FiBarChart2 />,   value: "15,000+", label: "Portfolios" },
-    { icon: <FiClock />,       value: "24/7",  label: "Monitoring" }
-  ].map((stat, index) => (
-    <motion.div
-      key={index}
-      className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col items-center"
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      variants={item}      // reuse your existing item variant
-      whileHover={{ scale: 1.03 }}
-    >
-      {/* Icon */}
-      <motion.div
-        className="text-red-600 mb-3 text-2xl"
-        initial={{ scale: 0.6, opacity: 0 }}
-        whileInView={{ scale: 1, opacity: 1 }}
-        transition={{ delay: index * 0.2, type: "spring", stiffness: 300 }}
-        viewport={{ once: true }}
-      >
-        {stat.icon}
-      </motion.div>
+        {/* Stats Overview with scroll‑triggered count-up */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          {[
+            { icon: <FiTrendingUp />,     end: 12.4,   suffix: '%',  label: "Avg Return" },
+            { icon: <FiShield />,          end: 98,     suffix: '%',  label: "Retention" },
+            { icon: <FiBarChart2 />,       end: 15000,  suffix: '+',  label: "Portfolios" },
+            { icon: <FiClock />,           end: 24,     suffix: '/7', label: "Monitoring" }
+          ].map((stat, i) => {
+            const ref = useRef(null);
+            const inView = useInView(ref, { once: true, margin: "-100px" });
+            const motionVal = useMotionValue(0);
+            const [display, setDisplay] = useState('0');
 
-      {/* Number */}
-      <motion.div
-        className="text-3xl font-bold mb-1"
-        initial={{ y: 20, opacity: 0 }}
-        whileInView={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.3 + index * 0.2, duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        {stat.value}
-      </motion.div>
+            useEffect(() => {
+              if (inView) {
+                const controls = animate(motionVal, stat.end, {
+                  duration: 1.5,
+                  ease: [0.22, 1, 0.36, 1],
+                  onUpdate: latest => {
+                    const formatted = stat.end % 1 !== 0
+                      ? latest.toFixed(1)
+                      : Math.round(latest).toLocaleString();
+                    setDisplay(formatted + stat.suffix);
+                  }
+                });
+                return () => controls.stop();
+              }
+            }, [inView, motionVal, stat.end, stat.suffix]);
 
-      {/* Label */}
-      <motion.div
-        className="text-gray-600"
-        initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
-        transition={{ delay: 0.5 + index * 0.2, duration: 0.6 }}
-        viewport={{ once: true }}
-      >
-        {stat.label}
-      </motion.div>
-    </motion.div>
-  ))}
-</motion.div>
-
+            return (
+              <div
+                key={i}
+                ref={ref}
+                className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col items-center"
+              >
+                <motion.div
+                  className="text-red-600 mb-3 text-2xl"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={inView ? { scale: 1, opacity: 1 } : {}}
+                  transition={{ delay: i * 0.2, type: "spring", stiffness: 300 }}
+                >
+                  {stat.icon}
+                </motion.div>
+                <motion.div
+                  className="text-3xl font-bold mb-1"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.8, delay: i * 0.2 }}
+                >
+                  {display}
+                </motion.div>
+                <motion.div
+                  className="text-gray-600"
+                  initial={{ opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.8, delay: 0.4 + i * 0.2 }}
+                >
+                  {stat.label}
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
 
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
