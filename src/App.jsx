@@ -1,5 +1,5 @@
 // === src/App.jsx ===
-import React from 'react'
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -18,6 +18,35 @@ import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
 
 function App() {
+   useEffect(() => {
+    const cleanup = () => {
+      // 1) Old code you already have:
+      const oldBanner = document.querySelector("iframe.goog-te-banner-frame");
+      if (oldBanner) {
+        oldBanner.remove();
+        document.body.style.top = "0";
+      }
+
+      // 2) New: scrub any iframe loading Google Translate
+      document.querySelectorAll('iframe').forEach((iframe) => {
+        const src = iframe.getAttribute('src') || "";
+        if (src.includes("translate.google")) {
+          iframe.remove();
+        }
+      });
+    };
+
+    // Run every half-second for a few seconds until Translate stops injecting
+    const intervalId = setInterval(cleanup, 300);
+    // After 5 seconds we can stop polling
+    const timeoutId  = setTimeout(() => clearInterval(intervalId), 5000);
+
+    return () => {
+      clearInterval(intervalId);
+      clearTimeout(timeoutId);
+    };
+  }, []);
+
   return (
     <Router>
       <div className="flex flex-col min-h-screen">

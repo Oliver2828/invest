@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,47 +22,40 @@
       }
     </style>
   </head>
-
   <body>
-    <!-- Google Translate container -->
+    <!-- Google Translate container (hidden) -->
     <div id="google_translate_element" style="display: none;"></div>
 
-    <!-- React root element -->
+    <!-- React Root -->
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- Force Korean on first load -->
-    <script>
-      if (!localStorage.getItem('forcedKorean')) {
-        document.cookie = 'googtrans=/en/ko; path=/';
-        localStorage.setItem('forcedKorean', 'true');
-        if (!window.location.hash.includes('translated')) {
-          window.location.hash = 'translated';
-          window.location.reload();
-        }
-      }
-    </script>
+    <!-- Google Translate Initialization -->
+    <!-- Google Translate container (hidden) -->
+<!-- Hidden Google Translate element -->
+<div id="google_translate_element" style="display: none;"></div>
 
-    <!-- Google Translate Script -->
-    <script>
-      function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-          pageLanguage: 'en',
-          includedLanguages: 'en,ko,fr,es,zh,ar',
-          layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-          autoDisplay: false
-        }, 'google_translate_element');
-      }
-    </script>
-    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript">
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,es,fr,de,zh',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+</script>
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-    <!-- Helper to manually switch languages -->
-    <script>
-      function changeLanguage(langCode) {
-        document.cookie = `googtrans=/en/${langCode}; path=/`;
-        localStorage.setItem('forcedKorean', 'true');
-        window.location.reload();
-      }
-    </script>
+
+<script>
+  const savedLang = localStorage.getItem("forcedLanguage");
+  if (savedLang && savedLang !== "en") {
+    const cookieValue = `/en/${savedLang}`;
+    document.cookie = `googtrans=${cookieValue}; path=/`;
+    document.cookie = `googtrans=${cookieValue}; domain=${window.location.hostname}; path=/`;
+  }
+</script>
+
   </body>
 </html>

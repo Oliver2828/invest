@@ -1,2 +1,44 @@
 @import "tailwindcss";
 
+/* remove the top “Google Translate” banner iframe */
+.goog-te-banner-frame.skiptranslate { 
+  display: none !important;
+}
+
+/* reset body top offset forced by the banner */
+body { 
+  top: 0 !important; 
+}
+
+/* hide the “Show original” tooltip/balloon */
+.goog-tooltip, 
+.goog-te-balloon-frame { 
+  display: none !important; 
+}
+
+/* hide the floating “Translate” badge in bottom corner */
+#goog-gt-tt, 
+.goog-te-menu-frame, 
+.goog-te-menu-value { 
+  display: none !important; 
+}
+
+/* Hide any Google-Translate banner iframes or containers */
+iframe.goog-te-banner-frame,
+iframe[id^="goog-te"],
+div.goog-te-banner-frame,
+div#goog-gt-*-frame,
+#goog-gt-tt,
+.goog-te-balloon-frame,
+.goog-tooltip,
+.goog-te-menu-frame,
+.goog-te-menu-value {
+  display: none !important;
+}
+
+/* Reset any body offset that Translate might have added */
+body {
+  top: 0 !important;
+}
+
+
