@@ -7,7 +7,7 @@ import {
   Tooltip, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 import { FiArrowUpRight, FiArrowDownRight, FiRefreshCw } from 'react-icons/fi';
-// import InvestorAlert from './InvestorAlerts'
+import InvestorAlert from './InvestorAlerts'
 
 // CORS proxy URL - replace with your own if needed
 const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
@@ -196,7 +196,7 @@ function HeroSection() {
   return (
     <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen text-white"> {/* Updated background gradient */}
       <div className="container mx-auto px-4 py-12">
-        {/* <InvestorAlert /> */}
+        <InvestorAlert />
         {/* Market Indices Ticker */}
         <motion.div 
           className="bg-gradient-to-r from-red-900/50 to-red-800/50 rounded-xl p-4 mb-8 overflow-hidden"
