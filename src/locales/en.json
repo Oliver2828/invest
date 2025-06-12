@@ -1,9 +1,9 @@
 {
-  "home": "Home",
-  "crypto_assets": "Crypto Assets",
-  "about": "About",
-  "faq": "FAQ",
-  "buy_crypto": "Buy Crypto",
-  "login": "Login",
-  "register": "Register"
+  "hero": {
+    "title": "Smart Investments,",
+    "subtitle": "Brighter Future",
+    "description": "Real-time market data, advanced trading tools, and personalized portfolio management - all in one powerful platform.",
+    "startTrading": "Start Trading",
+    "exploreMarkets": "Explore Markets"
+  }
 }
