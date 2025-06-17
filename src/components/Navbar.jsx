@@ -13,7 +13,7 @@ const Navbar = () => {
   
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "Mutual Funds", path: "/mutual-funds" },
+    // { name: "Mutual Funds", path: "/mutual-funds" },
     { name: "Fixed Income", path: "/fixed-income" },
     { name: "About", path: "/about" },
     { name: "FAQ", path: "/faq" },
