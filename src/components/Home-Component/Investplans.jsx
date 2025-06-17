@@ -1,7 +1,14 @@
 // === src/components/Investplans.jsx ===
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { FiArrowUpRight, FiCheck, FiTrendingUp, FiShield, FiBarChart2, FiClock } from 'react-icons/fi';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence, useMotionValue, animate, useInView } from 'framer-motion';
+import {
+  FiArrowUpRight,
+  FiCheck,
+  FiTrendingUp,
+  FiShield,
+  FiBarChart2,
+  FiClock
+} from 'react-icons/fi';
 
 const Investplans = () => {
   const [activeTab, setActiveTab] = useState('all');
@@ -118,211 +125,233 @@ const Investplans = () => {
     { id: 'aggressive', name: 'Aggressive' }
   ];
 
-  const filteredPlans = activeTab === 'all' 
-    ? plans 
+  const filteredPlans = activeTab === 'all'
+    ? plans
     : plans.filter(plan => plan.category === activeTab);
 
-  // Animation variants
   const container = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
   };
-
   const item = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: { duration: 0.5 }
-    }
+    hidden: { y: 30, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { type: 'spring', stiffness: 120 } }
   };
-
-  const tabHover = {
-    scale: 1.05,
-    backgroundColor: "rgba(239, 68, 68, 0.1)",
-    transition: { duration: 0.2 }
+  const featureItem = {
+    hidden: { x: -10, opacity: 0 },
+    visible: { x: 0, opacity: 1, transition: { duration: 0.3 } }
   };
 
   return (
     <div className="bg-gradient-to-b from-gray-50 to-gray-100 py-16 px-4">
       <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <motion.h2 
-            className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+        <div className="text-center mb-12">
+          <motion.h2
+            className="text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800"
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
           >
             Investment Plans
           </motion.h2>
-          <motion.p 
-            className="text-gray-600 max-w-2xl mx-auto text-lg"
+          <motion.p
+            className="text-gray-600 max-w-2xl mx-auto"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            transition={{ delay: 0.3, duration: 0.6 }}
           >
-            Discover investment strategies tailored to your financial goals and risk tolerance. 
-            Start building your wealth today with our expertly crafted portfolios.
+            Discover investment strategies tailored to your goals. Build your wealth with confidence.
           </motion.p>
         </div>
 
-        {/* Category Tabs */}
-        <motion.div 
-          className="flex flex-wrap justify-center gap-4 mb-12"
-          initial="hidden"
-          animate="visible"
-          variants={container}
-        >
-          {categories.map((category) => (
-            <motion.button
-              key={category.id}
-              className={`px-6 py-3 rounded-full font-medium transition-all ${
-                activeTab === category.id
-                  ? 'bg-gradient-to-r from-red-600 to-red-800 text-white shadow-lg shadow-red-500/30'
-                  : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-200'
-              }`}
-              onClick={() => setActiveTab(category.id)}
-              whileHover={tabHover}
-              variants={item}
-            >
-              {category.name}
-            </motion.button>
-          ))}
-        </motion.div>
+        <div className="relative mb-12">
+          <motion.div
+            className="flex justify-center space-x-4"
+            initial="hidden"
+            animate="visible"
+            variants={container}
+          >
+            {categories.map(cat => (
+              <motion.button
+                key={cat.id}
+                onClick={() => setActiveTab(cat.id)}
+                className={`py-2 font-medium transition-colors ${
+                  activeTab === cat.id
+                    ? 'text-red-700'
+                    : 'text-gray-600 hover:text-red-700'
+                }`}
+                variants={item}
+              >
+                {cat.name}
+              </motion.button>
+            ))}
+          </motion.div>
+          <motion.div
+            className="absolute bottom-0 h-1 bg-red-700 rounded-full"
+            layout
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            style={{
+              width: `${100 / categories.length}%`,
+              left: `${categories.findIndex(c => c.id === activeTab) * (100 / categories.length)}%`
+            }}
+          />
+        </div>
 
-        {/* Stats Overview */}
-        <motion.div 
-          className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16"
-          initial="hidden"
-          animate="visible"
-          variants={container}
-        >
+        {/* Stats Overview with scroll‑triggered count-up */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
           {[
-            { icon: <FiTrendingUp className="text-2xl" />, value: "12.4%", label: "Avg. Annual Return" },
-            { icon: <FiShield className="text-2xl" />, value: "98%", label: "Client Retention" },
-            { icon: <FiBarChart2 className="text-2xl" />, value: "15,000+", label: "Active Portfolios" },
-            { icon: <FiClock className="text-2xl" />, value: "24/7", label: "Portfolio Monitoring" }
-          ].map((stat, index) => (
-            <motion.div 
-              key={index}
-              className="bg-white p-6 rounded-xl shadow-md border border-gray-100"
-              variants={item}
-              whileHover={{ y: -5, boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.1)" }}
-            >
-              <div className="text-red-500 mb-3">{stat.icon}</div>
-              <div className="text-3xl font-bold mb-1">{stat.value}</div>
-              <div className="text-gray-600">{stat.label}</div>
-            </motion.div>
-          ))}
-        </motion.div>
+            { icon: <FiTrendingUp />,     end: 12.4,   suffix: '%',  label: "Avg Return" },
+            { icon: <FiShield />,          end: 98,     suffix: '%',  label: "Retention" },
+            { icon: <FiBarChart2 />,       end: 15000,  suffix: '+',  label: "Portfolios" },
+            { icon: <FiClock />,           end: 24,     suffix: '/7', label: "Monitoring" }
+          ].map((stat, i) => {
+            const ref = useRef(null);
+            const inView = useInView(ref, { once: true, margin: "-100px" });
+            const motionVal = useMotionValue(0);
+            const [display, setDisplay] = useState('0');
 
-        {/* Investment Plans Grid */}
-        <motion.div 
+            useEffect(() => {
+              if (inView) {
+                const controls = animate(motionVal, stat.end, {
+                  duration: 1.5,
+                  ease: [0.22, 1, 0.36, 1],
+                  onUpdate: latest => {
+                    const formatted = stat.end % 1 !== 0
+                      ? latest.toFixed(1)
+                      : Math.round(latest).toLocaleString();
+                    setDisplay(formatted + stat.suffix);
+                  }
+                });
+                return () => controls.stop();
+              }
+            }, [inView, motionVal, stat.end, stat.suffix]);
+
+            return (
+              <div
+                key={i}
+                ref={ref}
+                className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col items-center"
+              >
+                <motion.div
+                  className="text-red-600 mb-3 text-2xl"
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={inView ? { scale: 1, opacity: 1 } : {}}
+                  transition={{ delay: i * 0.2, type: "spring", stiffness: 300 }}
+                >
+                  {stat.icon}
+                </motion.div>
+                <motion.div
+                  className="text-3xl font-bold mb-1"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.8, delay: i * 0.2 }}
+                >
+                  {display}
+                </motion.div>
+                <motion.div
+                  className="text-gray-600"
+                  initial={{ opacity: 0 }}
+                  animate={inView ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.8, delay: 0.4 + i * 0.2 }}
+                >
+                  {stat.label}
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
+
+        <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={container}
           initial="hidden"
           animate="visible"
+          variants={container}
         >
-          {filteredPlans.map((plan) => (
-            <motion.div
-              key={plan.id}
-              className={`bg-gradient-to-br ${plan.color} text-white rounded-2xl overflow-hidden shadow-xl`}
-              variants={item}
-              whileHover={{ 
-                y: -10,
-                boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)"
-              }}
-            >
-              <div className="p-6 relative">
-                {plan.popular && (
-                  <div className="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-xs font-bold">
-                    MOST POPULAR
+          <AnimatePresence>
+            {filteredPlans.map(plan => (
+              <motion.div
+                key={plan.id}
+                className={`relative bg-gradient-to-br ${plan.color} text-white rounded-2xl overflow-hidden`}
+                variants={item}
+                whileHover={{ y: -8, boxShadow: "0 15px 30px rgba(0,0,0,0.15)" }}
+                layout
+              >
+                <div className="p-6 space-y-4">
+                  {plan.popular && (
+                    <div className="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-xs font-bold">
+                      POPULAR
+                    </div>
+                  )}
+                  <h3 className="text-2xl font-bold">{plan.title}</h3>
+                  <p className="text-gray-200">{plan.description}</p>
+
+                  <div className="flex justify-between text-sm">
+                    <div>
+                      <div>Min Invest</div>
+                      <div className="font-semibold">${plan.minAmount.toLocaleString()}</div>
+                    </div>
+                    <div>
+                      <div>Returns</div>
+                      <div className="font-semibold">{plan.returnRate}</div>
+                    </div>
+                    <div>
+                      <div>Duration</div>
+                      <div className="font-semibold">{plan.duration}</div>
+                    </div>
                   </div>
-                )}
-                
-                <h3 className="text-2xl font-bold mb-2">{plan.title}</h3>
-                <p className="text-gray-200 mb-6">{plan.description}</p>
-                
-                <div className="flex justify-between mb-6">
+
                   <div>
-                    <div className="text-sm text-gray-300">Min. Investment</div>
-                    <div className="text-xl font-bold">${plan.minAmount.toLocaleString()}</div>
+                    <div className="uppercase text-xs mb-2">Key Features</div>
+                    <ul className="space-y-1">
+                      {plan.features.map((f, idx) => (
+                        <motion.li
+                          key={idx}
+                          className="flex items-start text-sm"
+                          variants={featureItem}
+                        >
+                          <FiCheck className="mt-1 mr-2 text-green-300" />
+                          {f}
+                        </motion.li>
+                      ))}
+                    </ul>
                   </div>
-                  <div>
-                    <div className="text-sm text-gray-300">Est. Returns</div>
-                    <div className="text-xl font-bold">{plan.returnRate}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-300">Duration</div>
-                    <div className="text-xl font-bold">{plan.duration}</div>
-                  </div>
+
+                  <motion.button
+                    className="w-full py-2 mt-4 bg-white text-gray-900 rounded-lg font-bold flex justify-center items-center"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Invest Now
+                    <FiArrowUpRight className="ml-1" />
+                  </motion.button>
                 </div>
-                
-                <div className="mb-6">
-                  <div className="text-sm font-medium mb-3">KEY FEATURES:</div>
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, index) => (
-                      <li key={index} className="flex items-start">
-                        <FiCheck className="text-green-400 mt-1 mr-2 flex-shrink-0" />
-                        <span>{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
+
+                <div className="bg-black/10 p-3 text-center text-xs">
+                  Protected by $250k insurance
                 </div>
-                
-                <motion.button
-                  className="w-full py-3 bg-white text-gray-900 rounded-lg font-bold flex items-center justify-center group"
-                  whileHover={{ 
-                    backgroundColor: "rgba(255, 255, 255, 0.9)",
-                    scale: 1.02
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Invest Now
-                  <FiArrowUpRight className="ml-2 transition-transform group-hover:translate-x-1" />
-                </motion.button>
-              </div>
-              
-              <div className="bg-black/10 p-4 text-center text-sm">
-                <span className="text-gray-300">All investments are protected by our </span>
-                <span className="text-yellow-400 font-medium">$250,000 insurance policy</span>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </motion.div>
-        
-        {/* Comparison Banner */}
-        <motion.div 
-          className="mt-16 bg-gradient-to-r from-red-900 to-red-700 rounded-2xl p-8 text-white"
-          initial={{ opacity: 0, y: 50 }}
+
+        <motion.div
+          className="mt-16 bg-gradient-to-r from-red-900 to-red-700 rounded-2xl p-8 text-white flex flex-col md:flex-row items-center justify-between"
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <h3 className="text-2xl font-bold mb-2">Not sure which plan is right for you?</h3>
-              <p className="text-red-100 max-w-xl">
-                Take our 2-minute assessment and we'll recommend the perfect investment strategy 
-                based on your financial goals and risk tolerance.
-              </p>
-            </div>
-            <motion.button
-              className="px-8 py-3 bg-white text-red-700 rounded-lg font-bold flex items-center group"
-              whileHover={{ 
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
-                scale: 1.05
-              }}
-              whileTap={{ scale: 0.95 }}
-            >
-              Take Assessment
-              <FiArrowUpRight className="ml-2 transition-transform group-hover:translate-x-1" />
-            </motion.button>
+          <div className="mb-4 md:mb-0">
+            <h3 className="text-2xl font-bold mb-2">Not sure which plan?</h3>
+            <p>Take our quick assessment to find your perfect match.</p>
           </div>
+          <motion.button
+            className="px-6 py-2 bg-white text-red-700 rounded-lg font-bold flex items-center"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Take Assessment
+            <FiArrowUpRight className="ml-2" />
+          </motion.button>
         </motion.div>
       </div>
     </div>
