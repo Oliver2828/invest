@@ -1,12 +1,12 @@
 import React from 'react';
-import phoneMockup from "../../assets/phone-mockup.jpg";// Replace with actual image path
+import phoneMockup from "../../assets/about.webp";// Replace with actual image path
 
 const About2 = () => {
   return (
     <div className="bg-gray-200 text-gray-800 p-6 md:p-12 flex flex-col lg:flex-row items-center gap-10">
       {/* Text Section */}
       <div className="w-full lg:w-1/2 space-y-6">
-        <h2 className="text-3xl md:text-4xl font-bold text-blue-600">Who we are</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-red-600">Who we are</h2>
         <p className="text-base md:text-lg leading-relaxed">
           We are an international investment firm with over 21 years of cumulative experience in the investment advisory industry.
           Our advisory investment strategy is driven by the extensive expertise and we adopt the highest standards of risk management
