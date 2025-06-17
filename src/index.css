@@ -42,5 +42,36 @@ body {
 }
 
 
+/* Global Scrollbar Styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ff0000 #ffffff;
+}
 
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+*::-webkit-scrollbar-track {
+  background: #ffffff;
+  border-radius: 10px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #ff0000;
+  border-radius: 20px;
+  border: 3px solid #ffffff;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #cc0000;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ff0000 #ffffff;
+}
 
