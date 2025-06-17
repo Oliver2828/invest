@@ -1,8 +1,15 @@
 import React from 'react'
+import FAQ1 from '../components/Faq-Component/FAQ1'
+
+
+
 
 function FAQ() {
   return (
-    <div>FAQ</div>
+    <div>
+      <FAQ1 />
+      
+    </div>
   )
 }
 
