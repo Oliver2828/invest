@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiUser, FiLock, FiEye, FiEyeOff, FiMail, FiPhone } from 'react-icons/fi';
+import { FcGoogle } from 'react-icons/fc';
+import { FaApple, FaFacebook } from 'react-icons/fa';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -24,7 +26,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[url(./assets/log.jpg)] bg-no-repeat bg-center bg-cover p-4">
       <div className="w-full max-w-md">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -40,7 +42,7 @@ const Login = () => {
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
             InvestNow
           </h2>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-200 mt-2">
             {isLogin ? 'Sign in to your investment account' : 'Create your investment account'}
           </p>
         </motion.div>
@@ -59,7 +61,7 @@ const Login = () => {
                 className={`pb-3 px-4 font-medium relative ${isLogin ? 'text-red-700' : 'text-gray-500'}`}
                 onClick={() => setIsLogin(true)}
               >
-                Login
+                Sign in
                 {isLogin && (
                   <motion.div 
                     className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600"
@@ -71,7 +73,7 @@ const Login = () => {
                 className={`pb-3 px-4 font-medium relative ${!isLogin ? 'text-red-700' : 'text-gray-500'}`}
                 onClick={() => setIsLogin(false)}
               >
-                Register
+                Sign up
                 {!isLogin && (
                   <motion.div 
                     className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600"
@@ -102,7 +104,7 @@ const Login = () => {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        placeholder="John Doe"
+                       
                         required={!isLogin}
                       />
                     </div>
@@ -130,7 +132,7 @@ const Login = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        placeholder="(123) 456-7890"
+                       
                         required={!isLogin}
                       />
                     </div>
@@ -150,7 +152,7 @@ const Login = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    placeholder="john@example.com"
+                    
                     required
                   />
                 </div>
@@ -168,7 +170,7 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    placeholder="••••••••"
+             
                     required
                   />
                   <button
@@ -240,26 +242,39 @@ const Login = () => {
               </div>
 
               <div className="mt-6 grid grid-cols-3 gap-3">
-                {['Google', 'Facebook', 'Apple'].map((provider, idx) => (
-                  <motion.button
-                    key={idx}
-                    className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    whileHover={{ y: -3 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    {provider}
-                  </motion.button>
-                ))}
+                <motion.button
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
+                >
+                  <FcGoogle className="text-xl" />
+                  <span className="mt-1 text-xs text-gray-500">Google</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
+                >
+                  <FaApple className="text-xl text-gray-800" />
+                  <span className="mt-1 text-xs text-gray-500">Apple</span>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-blue-500/20 hover:bg-blue-50/50"
+                >
+                  <FaFacebook className="text-xl text-blue-600" />
+                  <span className="mt-1 text-xs text-gray-500">Facebook</span>
+                </motion.button>
               </div>
             </div>
           </div>
         </motion.div>
-
-      
       </div>
     </div>
   );
 };
 
 export default Login;
-

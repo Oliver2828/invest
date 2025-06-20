@@ -7,8 +7,7 @@ import FAQ1 from '../components/Faq-Component/FAQ1'
 function FAQ() {
   return (
     <div>
-      <FAQ1 />
-      
+      <FAQ1 />  
     </div>
   )
 }

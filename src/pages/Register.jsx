@@ -27,7 +27,7 @@ export const Register = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-[url(./assets/log.jpg)] bg-no-repeat bg-center bg-cover p-4">
       <div className="w-full max-w-md">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -43,7 +43,7 @@ export const Register = () => {
           <h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800">
             InvestNow
           </h2>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-200 mt-2">
             Create your investment account
           </p>
         </motion.div>

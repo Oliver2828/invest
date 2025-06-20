@@ -1,159 +1,40 @@
 // === src/components/HeroSection.jsx ===
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useTranslation } from "react-i18next";
 import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer, AreaChart, Area
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, 
+  Tooltip, ResponsiveContainer 
 } from 'recharts';
 import { FiArrowUpRight, FiArrowDownRight, FiRefreshCw } from 'react-icons/fi';
-import InvestorAlert from './InvestorAlerts'
+import InvestorAlert from './InvestorAlerts';
 
-// CORS proxy URL - replace with your own if needed
-const CORS_PROXY = "https://cors-anywhere.herokuapp.com/";
-const BINANCE_API = "https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=24";
-const WS_URL = "wss://stream.binance.com:9443/ws/btcusdt@trade";
-
-// Mock data fallback
-const mockBtcData = [
-  { time: '00:00', price: 62000 },
-  { time: '04:00', price: 62500 },
-  { time: '08:00', price: 61800 },
-  { time: '12:00', price: 62200 },
-  { time: '16:00', price: 62800 },
-  { time: '20:00', price: 63200 },
-  { time: '23:00', price: 63000 },
-];
-
-const useBinanceData = () => {
-  const [btcData, setBtcData] = useState([]);
-  const [currentPrice, setCurrentPrice] = useState(null);
-  const [priceChange, setPriceChange] = useState({ value: 0, percentage: 0 });
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [useMockData, setUseMockData] = useState(false);
-  const ws = useRef(null);
-  const reconnectAttempts = useRef(0);
-
-  const fetchHistoricalData = async () => {
-    try {
-      const response = await fetch(CORS_PROXY + BINANCE_API);
-      const data = await response.json();
-      
-      const formattedData = data.map(item => ({
-        time: new Date(item[0]).getHours() + ':00',
-        price: parseFloat(item[4]),
-        open: parseFloat(item[1]),
-        high: parseFloat(item[2]),
-        low: parseFloat(item[3]),
-      }));
-      
-      setBtcData(formattedData);
-      
-      if (formattedData.length > 1) {
-        const firstPrice = formattedData[0].price;
-        const lastPrice = formattedData[formattedData.length - 1].price;
-        const changeValue = lastPrice - firstPrice;
-        const changePercentage = (changeValue / firstPrice) * 100;
-        
-        setPriceChange({
-          value: changeValue,
-          percentage: changePercentage
-        });
-        
-        setCurrentPrice(lastPrice);
-      }
-      
-      setIsLoading(false);
-    } catch (err) {
-      console.error("Error fetching historical data:", err);
-      setError(err);
-      setIsLoading(false);
-      setUseMockData(true);
-      setBtcData(mockBtcData);
-      setCurrentPrice(63000);
-      setPriceChange({
-        value: 1000,
-        percentage: 1.62
-      });
-    }
-  };
-
-  const setupWebSocket = () => {
-    if (ws.current) {
-      ws.current.close();
-    }
-
-    ws.current = new WebSocket(WS_URL);
-    
-    ws.current.onopen = () => {
-      console.log("WebSocket connected");
-      reconnectAttempts.current = 0;
-    };
-    
-    ws.current.onmessage = (event) => {
-      const tradeData = JSON.parse(event.data);
-      const price = parseFloat(tradeData.p);
-      
-      setCurrentPrice(price);
-      
-      setBtcData(prev => {
-        if (prev.length === 0) return prev;
-        
-        const newData = [...prev];
-        const lastIndex = newData.length - 1;
-        
-        newData[lastIndex] = {
-          ...newData[lastIndex],
-          price: price,
-          high: Math.max(newData[lastIndex].high, price),
-          low: Math.min(newData[lastIndex].low, price)
-        };
-        
-        return newData;
-      });
-    };
-
-    ws.current.onerror = (err) => {
-      console.error("WebSocket error:", err);
-    };
-
-    ws.current.onclose = (e) => {
-      console.log("WebSocket closed. Reconnecting...");
-      if (reconnectAttempts.current < 5) {
-        setTimeout(() => {
-          reconnectAttempts.current += 1;
-          setupWebSocket();
-        }, 3000 * reconnectAttempts.current);
-      }
-    };
-  };
-
-  useEffect(() => {
-    fetchHistoricalData();
-    setupWebSocket();
-
-    return () => {
-      if (ws.current) {
-        ws.current.close();
-      }
-    };
-  }, []);
-
-  return { btcData, currentPrice, priceChange, isLoading, error, useMockData };
-};
-
-function HeroSection() {
+const HeroSection = () => {
   const [activeTab, setActiveTab] = useState('btc');
   const [timeframe, setTimeframe] = useState('24h');
-  const { btcData, currentPrice, priceChange, isLoading, useMockData } = useBinanceData();
+  const videoRef = useRef(null);
+
+  // Mock data for demonstration
+  const btcData = [
+    { time: '00:00', price: 62000 },
+    { time: '04:00', price: 62500 },
+    { time: '08:00', price: 61800 },
+    { time: '12:00', price: 62200 },
+    { time: '16:00', price: 62800 },
+    { time: '20:00', price: 63200 },
+    { time: '23:00', price: 63000 },
+  ];
+  
+  const priceChange = { value: 1000, percentage: 1.62 };
+  const currentPrice = 63000;
+  const isLoading = false;
+  const useMockData = true;
 
   const tradesData = [
-    { id: 1, asset: 'BTC', type: 'Buy', amount: 0.5, value: currentPrice ? (0.5 * currentPrice).toFixed(2) : '0', time: '10:30 AM' },
-    { id: 2, asset: 'ETH', type: 'Sell', amount: 2.1, value: '6500', time: '11:15 AM' },
-    { id: 3, asset: 'AAPL', type: 'Buy', amount: 10, value: '18200', time: '11:45 AM' },
-    { id: 4, asset: 'TSLA', type: 'Sell', amount: 5, value: '12500', time: '12:30 PM' },
-    { id: 5, asset: 'SOL', type: 'Buy', amount: 25, value: '7500', time: '1:15 PM' },
+    { id: 1, asset: 'BTC', type: 'Buy', amount: 0.5, value: '31,500', time: '10:30 AM' },
+    { id: 2, asset: 'ETH', type: 'Sell', amount: 2.1, value: '6,500', time: '11:15 AM' },
+    { id: 3, asset: 'AAPL', type: 'Buy', amount: 10, value: '18,200', time: '11:45 AM' },
+    { id: 4, asset: 'TSLA', type: 'Sell', amount: 5, value: '12,500', time: '12:30 PM' },
+    { id: 5, asset: 'SOL', type: 'Buy', amount: 25, value: '7,500', time: '1:15 PM' },
   ];
 
   const stocksData = [
@@ -172,56 +53,35 @@ function HeroSection() {
     { name: 'CRYPTO', value: 1240000000000, change: '+1.82%' },
   ];
 
-  // Animation variants
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { y: 20, opacity: 0 },
-    show: { y: 0, opacity: 1 }
-  };
-
   const priceChangeColor = priceChange.percentage >= 0 ? 'text-green-400' : 'text-red-400';
   const priceChangeIcon = priceChange.percentage >= 0 ? 
     <FiArrowUpRight className="inline" /> : 
     <FiArrowDownRight className="inline" />;
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 to-gray-800 min-h-screen text-white"> {/* Updated background gradient */}
-      <div className="container mx-auto px-4 py-12">
-        <InvestorAlert />
-        {/* Market Indices Ticker */}
-        <motion.div 
-          className="bg-gradient-to-r from-red-900/50 to-red-800/50 rounded-xl p-4 mb-8 overflow-hidden"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+    <div className="relative min-h-screen text-white overflow-hidden">
+      {/* Video background */}
+      <div className="absolute inset-0 z-0">
+        <video 
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
         >
-          <div className="flex flex-wrap justify-between">
-            {marketIndices.map((index, i) => (
-              <motion.div 
-                key={index.name}
-                className="flex items-center m-2"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <span className="font-bold mr-2">{index.name}:</span>
-                <span className="mr-1">${index.value.toLocaleString()}</span>
-                <span className={`${index.change.includes('+') ? 'text-green-400' : 'text-red-400'}`}>
-                  {index.change}
-                </span>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
+          <source src="/src/assets/inves.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 "></div>
+        {/* Subtle grid pattern */}
+        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10 mix-blend-soft-light"></div>
+      </div>
+
+      <div className="container mx-auto px-4 py-12 relative z-10">
+        <InvestorAlert />
+        
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
@@ -230,67 +90,69 @@ function HeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
+              className="mb-12"
             >
-              <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-red-200">
-                Smart Investments, <br />Brighter Future
+              <h1 className="text-4xl md:text-5xl font-bold mb-6">
+                <span className="block mb-3">Intelligent Investing</span>
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-amber-500">
+                  Where Markets Meet Opportunity
+                </span>
               </h1>
-              <p className="text-gray-300 mb-8 text-lg max-w-lg">
-                Real-time market data, advanced trading tools, and personalized portfolio management - 
-                all in one powerful platform.
+              
+              <p className="text-lg text-gray-200 mb-8 max-w-lg leading-relaxed">
+                Harness real-time market intelligence, sophisticated analytics, and institutional-grade trading tools. 
+                Our platform transforms complex market data into actionable insights for investors at every level.
               </p>
               
-              <div className="flex flex-wrap gap-4 mb-12">
+              <div className="flex flex-wrap gap-4 mb-6">
                 <motion.button
-                  className="px-6 py-3 rounded-lg bg-gradient-to-r from-red-600 to-red-800 hover:from-red-700 hover:to-red-900 transition-all shadow-lg shadow-red-900/30"
+                  className="px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-amber-700 hover:from-red-700 hover:to-amber-800 transition-all shadow-lg shadow-red-900/30 flex items-center gap-2 group"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Start Trading
+                  <span>Start Trading Today</span>
+                  <FiArrowUpRight className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
+                
                 <motion.button
-                  className="px-6 py-3 rounded-lg border border-red-700 text-red-300 hover:bg-red-900/50 transition-all"
+                  className="px-8 py-4 rounded-xl border border-red-500/50 text-red-100 hover:bg-red-900/20 transition-all"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Explore Markets
+                  Explore Investment Solutions
                 </motion.button>
               </div>
+              
+             
             </motion.div>
 
             {/* Live Trades Section */}
             <motion.div 
-              className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+              className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-bold text-red-300">Recent Trades</h2>
-                <span className="text-green-400 text-sm flex items-center">
-                  <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                  LIVE
-                </span>
-              </div>
               
               <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                 {tradesData.map((trade) => (
                   <motion.div 
                     key={trade.id}
-                    className={`p-3 rounded-lg flex justify-between items-center ${
+                    className={`p-4 rounded-xl flex justify-between items-center backdrop-blur-sm ${
                       trade.type === 'Buy' 
-                        ? 'bg-green-900/20 border-l-4 border-green-500' 
-                        : 'bg-red-900/20 border-l-4 border-red-500'
+                        ? 'bg-green-900/20 border border-green-500/30' 
+                        : 'bg-red-900/20 border border-red-500/30'
                     }`}
-                    variants={item}
-                    initial="hidden"
-                    animate="show"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
                     <div>
-                      <div className="font-bold">{trade.asset}</div>
+                      <div className="font-bold text-lg">{trade.asset}</div>
                       <div className="text-sm text-gray-400">{trade.time}</div>
                     </div>
                     <div className="text-right">
-                      <div className={`font-bold ${trade.type === 'Buy' ? 'text-green-400' : 'text-red-400'}`}>
+                      <div className={`font-bold text-lg ${trade.type === 'Buy' ? 'text-green-400' : 'text-red-400'}`}>
                         {trade.type} {trade.amount}
                       </div>
                       <div className="text-sm">${trade.value}</div>
@@ -305,7 +167,7 @@ function HeroSection() {
           <div>
             {/* Chart Tabs */}
             <motion.div 
-              className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
+              className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
@@ -317,8 +179,8 @@ function HeroSection() {
                       key={tab}
                       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                         activeTab === tab
-                          ? 'bg-red-700 text-white'
-                          : 'bg-gray-700/50 text-gray-300 hover:bg-gray-700'
+                          ? 'bg-gradient-to-r from-red-600 to-amber-700 text-white'
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                       }`}
                       onClick={() => setActiveTab(tab)}
                     >
@@ -331,10 +193,10 @@ function HeroSection() {
                   {['1h', '24h', '7d', '30d', '90d'].map((time) => (
                     <button
                       key={time}
-                      className={`px-3 py-1 rounded text-xs ${
+                      className={`px-3 py-1.5 rounded-lg text-xs ${
                         timeframe === time
-                          ? 'bg-red-800 text-white'
-                          : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                          ? 'bg-amber-700 text-white'
+                          : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                       }`}
                       onClick={() => setTimeframe(time)}
                     >
@@ -345,7 +207,7 @@ function HeroSection() {
               </div>
 
               {/* Chart */}
-              <div className="h-80">
+              <div className="h-80 relative">
                 {isLoading ? (
                   <div className="h-full flex items-center justify-center">
                     <motion.div
@@ -365,14 +227,15 @@ function HeroSection() {
                           <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                      <XAxis dataKey="time" stroke="#999" />
-                      <YAxis stroke="#999" domain={['auto', 'auto']} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                      <XAxis dataKey="time" stroke="#94a3b8" />
+                      <YAxis stroke="#94a3b8" domain={['auto', 'auto']} />
                       <Tooltip 
                         contentStyle={{ 
                           background: '#1f2937', 
-                          borderColor: '#7f1d1d',
-                          borderRadius: '8px'
+                          borderColor: '#ef4444',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 20px rgba(239, 68, 68, 0.25)'
                         }} 
                         formatter={(value) => [`$${value.toLocaleString()}`, 'Price']}
                       />
@@ -380,6 +243,7 @@ function HeroSection() {
                         type="monotone" 
                         dataKey="price" 
                         stroke="#ef4444" 
+                        strokeWidth={3}
                         fillOpacity={1} 
                         fill="url(#colorPrice)" 
                         activeDot={{ r: 6, fill: '#dc2626' }}
@@ -387,29 +251,29 @@ function HeroSection() {
                     </AreaChart>
                   </ResponsiveContainer>
                 )}
-                {useMockData && (
-                  <div className="absolute top-4 right-4 bg-yellow-500/90 text-black px-3 py-1 rounded-full text-xs font-bold">
+                {/* {useMockData && (
+                  <div className="absolute top-4 right-4 bg-amber-500/90 text-black px-3 py-1 rounded-full text-xs font-bold">
                     Using Mock Data
                   </div>
-                )}
+                )} */}
               </div>
               
-              {/* BTC Price Info */}
-              <div className="flex justify-between items-center mt-4">
+              {/* Price Info */}
+              <div className="flex justify-between items-center mt-6">
                 <div>
-                  <div className="text-2xl font-bold">
-                    {currentPrice ? `$${currentPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Loading...'}
+                  <div className="text-3xl font-bold">
+                    {currentPrice ? `$${currentPrice.toLocaleString()}` : 'Loading...'}
                   </div>
-                  <div className="flex items-center">
-                    <span className={`${priceChangeColor} mr-2`}>
+                  <div className="flex items-center mt-1">
+                    <span className={`${priceChangeColor} font-medium flex items-center`}>
                       {priceChangeIcon} {priceChange.percentage.toFixed(2)}%
+                      <span className="text-gray-400 ml-2 text-sm">(24h change)</span>
                     </span>
-                    <span className="text-gray-400 text-sm">24h change</span>
                   </div>
                 </div>
                 <div className="text-right">
                   <div className="text-gray-400">24h Volume</div>
-                  <div className="font-bold">
+                  <div className="font-bold text-xl">
                     $42.8B
                   </div>
                 </div>
@@ -418,35 +282,35 @@ function HeroSection() {
 
             {/* Stocks Section */}
             <motion.div 
-              className="bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700 mt-8"
+              className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20 mt-8"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 }}
             >
-              <h2 className="text-xl font-bold text-red-300 mb-4">Top Stocks</h2>
+              <h2 className="text-xl font-bold text-red-300 mb-4">EQUITIES MARKET LEADERS</h2>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="text-left text-gray-400 text-sm">
-                      <th className="pb-3">Symbol</th>
-                      <th className="pb-3">Name</th>
-                      <th className="pb-3 text-right">Price</th>
-                      <th className="pb-3 text-right">Change</th>
-                      <th className="pb-3 text-right">Volume</th>
+                      <th className="pb-3">SYMBOL</th>
+                      <th className="pb-3">COMPANY</th>
+                      <th className="pb-3 text-right">PRICE</th>
+                      <th className="pb-3 text-right">CHANGE</th>
+                      <th className="pb-3 text-right">VOLUME</th>
                     </tr>
                   </thead>
                   <tbody>
                     {stocksData.map((stock) => (
-                      <tr key={stock.symbol} className="border-b border-gray-700/50 hover:bg-gray-700/30">
+                      <tr key={stock.symbol} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
                         <td className="py-3 font-bold">{stock.symbol}</td>
                         <td className="py-3 text-gray-300">{stock.name}</td>
-                        <td className="py-3 text-right">${stock.price}</td>
-                        <td className={`py-3 text-right ${
+                        <td className="py-3 text-right font-mono">${stock.price.toFixed(2)}</td>
+                        <td className={`py-3 text-right font-bold ${
                           stock.change.includes('+') ? 'text-green-400' : 'text-red-400'
                         }`}>
                           {stock.change}
                         </td>
-                        <td className="py-3 text-right text-gray-400">{stock.volume}</td>
+                        <td className="py-3 text-right text-gray-400 font-mono">{stock.volume}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -456,76 +320,7 @@ function HeroSection() {
           </div>
         </div>
 
-        {/* Market Overview */}
-        <motion.div 
-          className="mt-12 bg-gray-800/50 backdrop-blur-sm rounded-xl p-6 border border-gray-700"
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <h2 className="text-2xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-red-400 to-red-200">
-            Market Overview
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Crypto Market Cap */}
-            <div className="bg-gradient-to-br from-red-900/30 to-red-800/30 p-5 rounded-xl border border-red-900/50">
-              <div className="text-lg font-bold mb-2">Crypto Market Cap</div>
-              <div className="text-3xl font-bold mb-1">$2.38T</div>
-              <div className="flex items-center text-green-400">
-                <span>+1.82%</span>
-                <span className="ml-2 text-sm text-gray-300">24h change</span>
-              </div>
-              <ResponsiveContainer width="100%" height={100}>
-                <AreaChart data={btcData}>
-                  <Area 
-                    type="monotone" 
-                    dataKey="price" 
-                    stroke="#ef4444" 
-                    fill="url(#colorPrice)" 
-                    strokeWidth={2}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-            
-            {/* Fear & Greed Index */}
-            <div className="bg-gradient-to-br from-amber-900/30 to-amber-800/30 p-5 rounded-xl border border-amber-900/50">
-              <div className="text-lg font-bold mb-2">Fear & Greed Index</div>
-              <div className="flex items-end mb-2">
-                <div className="text-3xl font-bold text-amber-400 mr-2">74</div>
-                <div className="text-amber-400 font-medium">Greed</div>
-              </div>
-              <div className="w-full bg-gray-700 h-3 rounded-full mb-1">
-                <div 
-                  className="bg-gradient-to-r from-green-500 via-amber-400 to-red-500 h-3 rounded-full" 
-                  style={{ width: '74%' }}
-                ></div>
-              </div>
-              <div className="flex justify-between text-xs text-gray-400">
-                <span>Extreme Fear</span>
-                <span>Neutral</span>
-                <span>Extreme Greed</span>
-              </div>
-            </div>
-            
-            {/* Top Gainers */}
-            <div className="bg-gradient-to-br from-emerald-900/30 to-emerald-800/30 p-5 rounded-xl border border-emerald-900/50">
-              <div className="text-lg font-bold mb-2">Top Gainers</div>
-              <div className="space-y-3">
-                {stocksData.filter(s => s.change.includes('+')).slice(0, 3).map(stock => (
-                  <div key={stock.symbol} className="flex justify-between items-center">
-                    <div>
-                      <div className="font-bold">{stock.symbol}</div>
-                      <div className="text-sm text-gray-300">{stock.name}</div>
-                    </div>
-                    <div className="text-green-400 font-bold">{stock.change}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        
       </div>
     </div>
   );

@@ -52,7 +52,7 @@ const iconVariants = {
 
 export default function InvestmentSteps() {
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-20 px-4">
+    <div className="relative min-h-screen bg-[url(./assets/start.jpg)] bg-no-repeat bg-center bg-cover py-20 px-4">
       <div className="container mx-auto max-w-4xl text-center mb-16">
         <motion.h2
           className="text-3xl md:text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-red-600 to-red-800"
@@ -157,7 +157,7 @@ export default function InvestmentSteps() {
           Get Started Now
           <FiArrowRight className="ml-2" />
         </motion.button>
-        <p className="text-gray-600 mt-4 text-sm">
+        <p className="text-gray-200 mt-4 text-sm">
           Already have an account?
           <a href="#" className="text-red-600 font-medium ml-1 hover:underline">
             Sign in to invest
