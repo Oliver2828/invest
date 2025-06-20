@@ -218,7 +218,6 @@ export default function DashboardLayout() {
       submenu: [
         { name: 'Profile', path: '/dashboard/settings/profile' },
         { name: 'Notifications', path: '/dashboard/settings/notifications' },
-        { name: 'Payment Methods', path: '/dashboard/settings/payments' },
         { name: 'Statements', path: '/dashboard/settings/statements' },
       ]
     },
