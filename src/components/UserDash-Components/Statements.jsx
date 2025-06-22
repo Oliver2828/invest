@@ -295,7 +295,7 @@ const Statements = () => {
                 <h3 className="text-lg font-bold text-gray-900">Available Statements</h3>
                 <p className="text-sm text-gray-600">{filteredStatements.length} documents</p>
               </div>
-              
+              {/* vvcf */}
               {filteredStatements.length > 0 ? (
                 <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
                   <div className="grid grid-cols-12 gap-4 px-6 py-4 bg-gray-50 border-b border-gray-200 font-medium text-gray-700">
