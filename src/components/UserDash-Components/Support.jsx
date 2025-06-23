@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaHeadset, FaEnvelope, FaPhone, FaWhatsapp, FaQuestionCircle, 
          FaTicketAlt, FaChevronDown, FaChevronUp, FaPaperPlane, 
-         FaClock, FaCheckCircle, FaExclamationTriangle, FaUser } from 'react-icons/fa';
+         FaClock, FaCheckCircle, FaExclamationTriangle, FaUser, FaSearch, FaPlus } from 'react-icons/fa';
 
 const Support = () => {
   const [activeTab, setActiveTab] = useState('contact');
@@ -91,31 +91,31 @@ const Support = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-8 font-sans text-gray-100">
+    <div className="min-h-screen bg-white px-4 py-8 font-sans text-gray-800">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3">
-              <FaHeadset className="text-red-500" />
+            <h1 className="text-3xl md:text-4xl font-bold text-red-700 flex items-center gap-3">
+              <FaHeadset className="text-red-700" />
               Support Center
             </h1>
-            <p className="text-gray-400 mt-2">We're here to help you with any questions or issues</p>
+            <p className="text-gray-600 mt-2">We're here to help you with any questions or issues</p>
           </div>
           <div className="mt-4 md:mt-0">
-            <div className="flex items-center bg-gradient-to-r from-red-700 to-red-900 px-4 py-2 rounded-lg">
-              <span className="text-white">24/7 Support Available</span>
+            <div className="flex items-center bg-gradient-to-r from-red-600 to-red-800 px-4 py-2 rounded-lg shadow">
+              <span className="text-white font-medium">24/7 Support Available</span>
             </div>
           </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap border-b border-gray-700 mb-8">
+        <div className="flex flex-wrap border-b border-red-200 mb-8">
           <button
             className={`px-4 py-2 font-medium flex items-center gap-2 ${
               activeTab === 'contact'
-                ? 'text-red-400 border-b-2 border-red-500'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-red-700 border-b-2 border-red-700'
+                : 'text-gray-600 hover:text-red-600'
             }`}
             onClick={() => setActiveTab('contact')}
           >
@@ -124,8 +124,8 @@ const Support = () => {
           <button
             className={`px-4 py-2 font-medium flex items-center gap-2 ${
               activeTab === 'faq'
-                ? 'text-red-400 border-b-2 border-red-500'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-red-700 border-b-2 border-red-700'
+                : 'text-gray-600 hover:text-red-600'
             }`}
             onClick={() => setActiveTab('faq')}
           >
@@ -134,8 +134,8 @@ const Support = () => {
           <button
             className={`px-4 py-2 font-medium flex items-center gap-2 ${
               activeTab === 'tickets'
-                ? 'text-red-400 border-b-2 border-red-500'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-red-700 border-b-2 border-red-700'
+                : 'text-gray-600 hover:text-red-600'
             }`}
             onClick={() => setActiveTab('tickets')}
           >
@@ -144,8 +144,8 @@ const Support = () => {
           <button
             className={`px-4 py-2 font-medium flex items-center gap-2 ${
               activeTab === 'new'
-                ? 'text-red-400 border-b-2 border-red-500'
-                : 'text-gray-400 hover:text-gray-300'
+                ? 'text-red-700 border-b-2 border-red-700'
+                : 'text-gray-600 hover:text-red-600'
             }`}
             onClick={() => setActiveTab('new')}
           >
@@ -157,78 +157,78 @@ const Support = () => {
         {activeTab === 'contact' && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Live Chat */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6">
+            <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-red-900/30 p-3 rounded-full">
-                  <FaHeadset className="text-red-400 text-2xl" />
+                <div className="bg-red-100 p-3 rounded-full">
+                  <FaHeadset className="text-red-700 text-2xl" />
                 </div>
-                <h2 className="text-xl font-semibold text-white">Live Chat</h2>
+                <h2 className="text-xl font-semibold text-red-800">Live Chat</h2>
               </div>
-              <p className="text-gray-400 mb-6">
+              <p className="text-gray-600 mb-6">
                 Chat with our support team in real-time. Our average response time is less than 2 minutes.
               </p>
-              <button className="w-full bg-gradient-to-r from-red-700 to-red-900 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">
+              <button className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity shadow-md">
                 Start Chat Now
               </button>
-              <div className="mt-4 flex items-center text-sm text-gray-400">
+              <div className="mt-4 flex items-center text-sm text-gray-600">
                 <FaClock className="mr-2" /> Available 24/7
               </div>
             </div>
 
             {/* Email Support */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6">
+            <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-red-900/30 p-3 rounded-full">
-                  <FaEnvelope className="text-red-400 text-2xl" />
+                <div className="bg-red-100 p-3 rounded-full">
+                  <FaEnvelope className="text-red-700 text-2xl" />
                 </div>
-                <h2 className="text-xl font-semibold text-white">Email Support</h2>
+                <h2 className="text-xl font-semibold text-red-800">Email Support</h2>
               </div>
-              <p className="text-gray-400 mb-6">
+              <p className="text-gray-600 mb-6">
                 Send us an email and we'll respond within 24 hours. For faster response, use live chat.
               </p>
               <div className="mb-4">
-                <label className="block text-gray-300 mb-2">Your Message</label>
+                <label className="block text-gray-700 mb-2">Your Message</label>
                 <textarea 
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-200 min-h-[100px]"
+                  className="w-full bg-white border border-red-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800 min-h-[100px]"
                   placeholder="Type your message here..."
                 ></textarea>
               </div>
-              <button className="w-full bg-gradient-to-r from-red-700 to-red-900 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity">
+              <button className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity shadow-md">
                 Send Email
               </button>
             </div>
 
             {/* Phone & WhatsApp */}
-            <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6">
+            <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="bg-red-900/30 p-3 rounded-full">
-                  <FaPhone className="text-red-400 text-2xl" />
+                <div className="bg-red-100 p-3 rounded-full">
+                  <FaPhone className="text-red-700 text-2xl" />
                 </div>
-                <h2 className="text-xl font-semibold text-white">Phone & WhatsApp</h2>
+                <h2 className="text-xl font-semibold text-red-800">Phone & WhatsApp</h2>
               </div>
-              <p className="text-gray-400 mb-6">
+              <p className="text-gray-600 mb-6">
                 Call us directly or message us on WhatsApp for immediate assistance.
               </p>
               
               <div className="space-y-4 mb-6">
-                <div className="flex items-center gap-3 bg-gray-700/50 p-4 rounded-lg">
-                  <FaPhone className="text-green-400" />
+                <div className="flex items-center gap-3 bg-red-50 p-4 rounded-lg border border-red-100">
+                  <FaPhone className="text-green-600" />
                   <div>
-                    <h3 className="font-medium text-white">Phone Support</h3>
-                    <p className="text-gray-400">+234 800 123 4567</p>
+                    <h3 className="font-medium text-red-800">Phone Support</h3>
+                    <p className="text-gray-600">+234 800 123 4567</p>
                   </div>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-gray-700/50 p-4 rounded-lg">
+                <div className="flex items-center gap-3 bg-red-50 p-4 rounded-lg border border-red-100">
                   <FaWhatsapp className="text-green-500" />
                   <div>
-                    <h3 className="font-medium text-white">WhatsApp</h3>
-                    <p className="text-gray-400">+234 800 123 4567</p>
+                    <h3 className="font-medium text-red-800">WhatsApp</h3>
+                    <p className="text-gray-600">+234 800 123 4567</p>
                   </div>
                 </div>
               </div>
               
-              <div className="text-sm text-gray-400">
+              <div className="text-sm text-gray-600">
                 <FaClock className="inline mr-2" /> Mon-Fri: 8am-8pm, Sat: 9am-5pm (WAT)
               </div>
             </div>
@@ -237,19 +237,19 @@ const Support = () => {
 
         {/* FAQ Section */}
         {activeTab === 'faq' && (
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6">
+          <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <FaQuestionCircle className="text-red-400" />
+              <h2 className="text-xl font-semibold text-red-800 flex items-center gap-2">
+                <FaQuestionCircle className="text-red-700" />
                 Frequently Asked Questions
               </h2>
               <div className="relative w-full md:w-64 mt-4 md:mt-0">
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                  <FaSearch className="text-gray-400" />
+                  <FaSearch className="text-gray-500" />
                 </div>
                 <input
                   type="text"
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-200"
+                  className="w-full bg-white border border-red-200 rounded-lg pl-10 pr-4 py-2 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800"
                   placeholder="Search FAQs..."
                 />
               </div>
@@ -257,24 +257,24 @@ const Support = () => {
             
             <div className="space-y-4">
               {faqItems.map((faq) => (
-                <div key={faq.id} className="bg-gray-700/50 rounded-xl overflow-hidden">
+                <div key={faq.id} className="bg-red-50 rounded-xl overflow-hidden border border-red-100">
                   <button
                     className="flex justify-between items-center w-full p-4 text-left"
                     onClick={() => toggleFaq(faq.id)}
                   >
-                    <span className="font-medium text-white">{faq.question}</span>
+                    <span className="font-medium text-red-800">{faq.question}</span>
                     {activeFaq === faq.id ? (
-                      <FaChevronUp className="text-red-400" />
+                      <FaChevronUp className="text-red-700" />
                     ) : (
-                      <FaChevronDown className="text-red-400" />
+                      <FaChevronDown className="text-red-700" />
                     )}
                   </button>
                   
                   {activeFaq === faq.id && (
-                    <div className="p-4 pt-0 border-t border-gray-700">
-                      <p className="text-gray-300">{faq.answer}</p>
+                    <div className="p-4 pt-0">
+                      <p className="text-gray-700">{faq.answer}</p>
                       <div className="mt-4">
-                        <button className="text-red-400 hover:text-red-300 text-sm">
+                        <button className="text-red-700 hover:text-red-800 text-sm">
                           Was this helpful?
                         </button>
                       </div>
@@ -285,9 +285,9 @@ const Support = () => {
             </div>
             
             <div className="mt-8 text-center">
-              <p className="text-gray-400 mb-4">Didn't find what you were looking for?</p>
+              <p className="text-gray-600 mb-4">Didn't find what you were looking for?</p>
               <button 
-                className="text-red-400 hover:text-red-300 font-medium flex items-center justify-center gap-2"
+                className="text-red-700 hover:text-red-800 font-medium flex items-center justify-center gap-2"
                 onClick={() => setActiveTab('new')}
               >
                 <FaEnvelope className="text-sm" /> Contact our support team
@@ -298,14 +298,14 @@ const Support = () => {
 
         {/* Support Tickets */}
         {activeTab === 'tickets' && (
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6">
+          <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <FaTicketAlt className="text-red-400" />
+              <h2 className="text-xl font-semibold text-red-800 flex items-center gap-2">
+                <FaTicketAlt className="text-red-700" />
                 My Support Tickets
               </h2>
               <button 
-                className="text-red-400 hover:text-red-300 font-medium flex items-center gap-2"
+                className="text-red-700 hover:text-red-800 font-medium flex items-center gap-2"
                 onClick={() => setActiveTab('new')}
               >
                 <FaPlus className="text-sm" /> New Ticket
@@ -314,46 +314,46 @@ const Support = () => {
             
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-700/50">
+                <thead className="bg-red-50">
                   <tr>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Ticket ID</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Subject</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Category</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Status</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Date</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-gray-300">Last Update</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Ticket ID</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Subject</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Category</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Status</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Date</th>
+                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-800">Last Update</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
+                <tbody className="divide-y divide-red-100">
                   {supportTickets.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-gray-700/30">
-                      <td className="py-3 px-4 font-medium text-red-400">{ticket.id}</td>
-                      <td className="py-3 px-4 font-medium text-white">{ticket.subject}</td>
-                      <td className="py-3 px-4 text-gray-300 capitalize">{ticket.category}</td>
+                    <tr key={ticket.id} className="hover:bg-red-50">
+                      <td className="py-3 px-4 font-medium text-red-700">{ticket.id}</td>
+                      <td className="py-3 px-4 font-medium text-gray-800">{ticket.subject}</td>
+                      <td className="py-3 px-4 text-gray-700 capitalize">{ticket.category}</td>
                       <td className="py-3 px-4">
                         {ticket.status === 'resolved' ? (
-                          <span className="flex items-center text-green-400">
+                          <span className="flex items-center text-green-600">
                             <FaCheckCircle className="mr-1" /> Resolved
                           </span>
                         ) : ticket.status === 'in progress' ? (
-                          <span className="flex items-center text-yellow-400">
+                          <span className="flex items-center text-yellow-600">
                             <FaClock className="mr-1" /> In Progress
                           </span>
                         ) : (
-                          <span className="flex items-center text-red-400">
+                          <span className="flex items-center text-red-600">
                             <FaExclamationTriangle className="mr-1" /> Open
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-4 text-gray-300">{ticket.date}</td>
-                      <td className="py-3 px-4 text-gray-300">{ticket.lastUpdate}</td>
+                      <td className="py-3 px-4 text-gray-700">{ticket.date}</td>
+                      <td className="py-3 px-4 text-gray-700">{ticket.lastUpdate}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             
-            <div className="mt-6 text-center text-gray-400">
+            <div className="mt-6 text-center text-gray-600">
               Showing 4 of 4 tickets
             </div>
           </div>
@@ -361,21 +361,21 @@ const Support = () => {
 
         {/* New Support Ticket */}
         {activeTab === 'new' && (
-          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-lg p-6 max-w-3xl mx-auto">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2 mb-6">
-              <FaEnvelope className="text-red-400" />
+          <div className="bg-white border border-red-200 rounded-2xl shadow-lg p-6 max-w-3xl mx-auto">
+            <h2 className="text-xl font-semibold text-red-800 flex items-center gap-2 mb-6">
+              <FaEnvelope className="text-red-700" />
               Submit a New Support Request
             </h2>
             
             {ticketSubmitted ? (
-              <div className="bg-green-900/30 border border-green-800 p-6 rounded-xl text-center mb-6">
-                <FaCheckCircle className="text-green-400 text-4xl mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-white mb-2">Ticket Submitted Successfully!</h3>
-                <p className="text-green-300">
+              <div className="bg-green-100 border border-green-300 p-6 rounded-xl text-center mb-6">
+                <FaCheckCircle className="text-green-600 text-4xl mx-auto mb-4" />
+                <h3 className="text-xl font-semibold text-green-800 mb-2">Ticket Submitted Successfully!</h3>
+                <p className="text-green-700">
                   Your support ticket has been submitted. Our team will respond within 24 hours.
                 </p>
-                <p className="mt-4 text-gray-300">
-                  Ticket ID: <span className="font-mono text-green-400">TKT-{Math.floor(Math.random()*90000+10000)}</span>
+                <p className="mt-4 text-gray-600">
+                  Ticket ID: <span className="font-mono text-green-700">TKT-{Math.floor(Math.random()*90000+10000)}</span>
                 </p>
               </div>
             ) : null}
@@ -383,11 +383,11 @@ const Support = () => {
             <form onSubmit={handleSubmitTicket}>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                 <div>
-                  <label className="block text-gray-300 mb-2">Category</label>
+                  <label className="block text-gray-700 mb-2">Category</label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-200"
+                    className="w-full bg-white border border-red-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800"
                   >
                     <option value="account">Account Issues</option>
                     <option value="transactions">Transactions</option>
@@ -399,12 +399,12 @@ const Support = () => {
                 </div>
                 
                 <div>
-                  <label className="block text-gray-300 mb-2">Subject</label>
+                  <label className="block text-gray-700 mb-2">Subject</label>
                   <input
                     type="text"
                     value={subject}
                     onChange={(e) => setSubject(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-200"
+                    className="w-full bg-white border border-red-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800"
                     placeholder="Briefly describe your issue"
                     required
                   />
@@ -412,11 +412,11 @@ const Support = () => {
               </div>
               
               <div className="mb-6">
-                <label className="block text-gray-300 mb-2">Description</label>
+                <label className="block text-gray-700 mb-2">Description</label>
                 <textarea
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-200 min-h-[200px]"
+                  className="w-full bg-white border border-red-200 rounded-lg px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent text-gray-800 min-h-[200px]"
                   placeholder="Please provide detailed information about your issue..."
                   required
                 ></textarea>
@@ -426,11 +426,11 @@ const Support = () => {
               </div>
               
               <div className="mb-6">
-                <label className="block text-gray-300 mb-2">Attachments (Optional)</label>
+                <label className="block text-gray-700 mb-2">Attachments (Optional)</label>
                 <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-700 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700/50">
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-red-200 border-dashed rounded-lg cursor-pointer bg-red-50 hover:bg-red-100">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FaPaperPlane className="text-gray-500 text-2xl mb-2" />
+                      <FaPaperPlane className="text-red-500 text-2xl mb-2" />
                       <p className="text-sm text-gray-500">
                         <span className="font-semibold">Click to upload</span> or drag and drop
                       </p>
@@ -443,29 +443,29 @@ const Support = () => {
               
               <button 
                 type="submit"
-                className="w-full bg-gradient-to-r from-red-700 to-red-900 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity"
+                className="w-full bg-gradient-to-r from-red-600 to-red-800 text-white py-3 rounded-lg font-medium hover:opacity-90 transition-opacity shadow-md"
               >
                 Submit Ticket
               </button>
             </form>
             
             <div className="mt-8">
-              <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-                <FaHeadset className="text-red-400" />
+              <h3 className="text-lg font-semibold text-red-800 mb-3 flex items-center gap-2">
+                <FaHeadset className="text-red-700" />
                 Before Submitting
               </h3>
-              <ul className="text-gray-400 space-y-2">
+              <ul className="text-gray-700 space-y-2">
                 <li className="flex items-start">
-                  <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                  <span>Check our <button className="text-red-400 hover:text-red-300" onClick={() => setActiveTab('faq')}>FAQs</button> - your question might already be answered</span>
+                  <FaCheckCircle className="text-green-600 mt-1 mr-2 flex-shrink-0" />
+                  <span>Check our <button className="text-red-700 hover:text-red-800" onClick={() => setActiveTab('faq')}>FAQs</button> - your question might already be answered</span>
                 </li>
                 <li className="flex items-start">
-                  <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
+                  <FaCheckCircle className="text-green-600 mt-1 mr-2 flex-shrink-0" />
                   <span>Include relevant details like transaction IDs, account numbers, or error messages</span>
                 </li>
                 <li className="flex items-start">
-                  <FaCheckCircle className="text-green-500 mt-1 mr-2 flex-shrink-0" />
-                  <span>For urgent issues, use our <button className="text-red-400 hover:text-red-300" onClick={() => setActiveTab('contact')}>live chat</button> or phone support</span>
+                  <FaCheckCircle className="text-green-600 mt-1 mr-2 flex-shrink-0" />
+                  <span>For urgent issues, use our <button className="text-red-700 hover:text-red-800" onClick={() => setActiveTab('contact')}>live chat</button> or phone support</span>
                 </li>
               </ul>
             </div>
@@ -473,19 +473,19 @@ const Support = () => {
         )}
 
         {/* Support Resources Banner */}
-        <div className="bg-gradient-to-r from-red-900 via-red-800 to-red-900 rounded-2xl shadow-lg p-6 mt-8">
+        <div className="bg-gradient-to-r from-red-600 to-red-800 rounded-2xl shadow-lg p-6 mt-8">
           <div className="flex flex-col md:flex-row items-center">
             <div className="flex-1 mb-4 md:mb-0">
               <h3 className="text-xl font-semibold text-white mb-2">Need Immediate Assistance?</h3>
-              <p className="text-red-200">
+              <p className="text-red-100">
                 Our support team is available 24/7 to help with urgent issues.
               </p>
             </div>
             <div className="flex gap-3">
-              <button className="bg-white text-red-800 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center gap-2">
+              <button className="bg-white text-red-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors shadow flex items-center gap-2">
                 <FaPhone /> Call Now
               </button>
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors flex items-center gap-2">
+              <button className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors shadow flex items-center gap-2">
                 <FaWhatsapp /> WhatsApp
               </button>
             </div>
@@ -493,7 +493,6 @@ const Support = () => {
         </div>
       </div>
     </div>
-    
   );
 };
 
