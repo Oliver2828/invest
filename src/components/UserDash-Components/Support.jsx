@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { FaHeadset, FaEnvelope, FaPhone, FaWhatsapp, FaQuestionCircle, 
          FaTicketAlt, FaChevronDown, FaChevronUp, FaPaperPlane, 
+<<<<<<< HEAD
          FaClock, FaCheckCircle, FaExclamationTriangle, FaUser, FaSearch, FaPlus } from 'react-icons/fa';
+=======
+         FaClock, FaCheckCircle, FaSearch, FaPlus, FaExclamationTriangle, FaUser } from 'react-icons/fa';
+>>>>>>> 9bd9be9975675350f822984c387b2ead42a8d09d
 
 const Support = () => {
   const [activeTab, setActiveTab] = useState('contact');
