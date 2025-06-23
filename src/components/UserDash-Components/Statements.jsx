@@ -304,6 +304,7 @@ const Statements = () => {
                     <div className="col-span-3">Amount</div>
                     <div className="col-span-2 text-right">Actions</div>
                   </div>
+                  {/* vvvv */}
                   
                   <div className="divide-y divide-gray-100">
                     {filteredStatements.map(statement => (
