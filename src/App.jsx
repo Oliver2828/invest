@@ -29,6 +29,9 @@ import PaymentMethods from "./components/UserDash-Components/PaymentMethods";
 import Statements from "./components/UserDash-Components/Statements";
 import Support from "./components/UserDash-Components/Support";
 
+import AdDashboard from "./pages/Admin/AdDashboard"
+import AdDashboardHome from './components/AdDashboard-components/AdDashboardHome';
+
 function AppContent() {
   const location = useLocation();
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
@@ -90,6 +93,11 @@ function AppContent() {
               <Route path="statements" element={<Statements />} />
             </Route>
             <Route path="support" element={<Support />} />
+          </Route>
+
+          <Route path="/admin" element={<AdDashboard />}>
+            <Route index element={<AdDashboardHome />} />
+            
           </Route>
         </Routes>
       </main>
