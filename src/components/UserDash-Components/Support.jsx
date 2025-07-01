@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
 import { FaHeadset, FaEnvelope, FaPhone, FaWhatsapp, FaQuestionCircle, 
          FaTicketAlt, FaChevronDown, FaChevronUp, FaPaperPlane, 
-<<<<<<< HEAD
-         FaClock, FaCheckCircle, FaExclamationTriangle, FaUser, FaSearch, FaPlus } from 'react-icons/fa';
-=======
          FaClock, FaCheckCircle, FaSearch, FaPlus, FaExclamationTriangle, FaUser } from 'react-icons/fa';
->>>>>>> 9bd9be9975675350f822984c387b2ead42a8d09d
 
 const Support = () => {
   const [activeTab, setActiveTab] = useState('contact');
@@ -43,6 +39,8 @@ const Support = () => {
       answer: 'You can update your personal information in the "Account Settings" section. For security reasons, some changes may require verification. If you need to change your registered email or phone number, contact our support team for assistance.'
     }
   ];
+
+  // bnbnb
 
   // Support tickets data
   const supportTickets = [
