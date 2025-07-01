@@ -201,8 +201,12 @@ export default function DashboardLayout() {
   }, []);
 
   const menuItems = useMemo(() => [
-    { name: 'Dashboard', icon: FiHome, path: '/admin' },
-    { name: 'Portfolio', icon: FiPieChart, path: '/dashboard/portfolio' },
+    { name: ' Admin', icon: FiHome, path: '/admin' },
+    { name: 'Accounts', icon: FiPieChart, path: '/admin/accounts' },
+    { name: 'Update Accounts', icon: FiPieChart, path: '/admin/update' },
+    
+     { name: 'Deactive Accounts', icon: FiPieChart, path: '/admin/deactive' },
+
     
   ], []);
 
