@@ -29,6 +29,12 @@ import PaymentMethods from "./components/UserDash-Components/PaymentMethods";
 import Statements from "./components/UserDash-Components/Statements";
 import Support from "./components/UserDash-Components/Support";
 
+import AdDashboard from "./pages/Admin/AdDashboard"
+import AdDashboardHome from './components/AdDashboard-components/AdDashboardHome';
+import Accounts from './components/AdDashboard-components/Accounts';
+import UpdateAccounts from './components/AdDashboard-components/UpdateAccounts';
+import DeactiveAccounts from './components/AdDashboard-components/DeactiveAccounts';
+
 function AppContent() {
   const location = useLocation();
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
@@ -90,6 +96,17 @@ function AppContent() {
               <Route path="statements" element={<Statements />} />
             </Route>
             <Route path="support" element={<Support />} />
+          </Route>
+
+          <Route path="/admin" element={<AdDashboard />}>
+            <Route index element={<AdDashboardHome />} />
+            <Route path="accounts" element={<Accounts />} />
+            <Route path="update" element={<UpdateAccounts />} />
+            <Route path="deactive" element={<DeactiveAccounts />} />
+
+
+
+            
           </Route>
         </Routes>
       </main>
