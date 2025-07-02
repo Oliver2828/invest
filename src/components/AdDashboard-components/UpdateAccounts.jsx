@@ -29,7 +29,6 @@ const UpdateAccountsDashboard = () => {
 
   // sample accounts
   const [accounts, setAccounts] = useState([
-<<<<<<< HEAD
     {
       id: '1',
       name: 'John Doe',
@@ -97,11 +96,6 @@ const UpdateAccountsDashboard = () => {
       updatedBy: 'admin@example.com',
       pendingChanges: 3
     },
-=======
-    { id:'1', name:'John Doe',    email:'john@example.com',  phone:'555-1234', role:'User',    status:'Active',    lastUpdated:'2023-07-15', updatedBy:'admin', pendingChanges:0 },
-    { id:'2', name:'Sarah Smith', email:'sarah@example.com', phone:'555-9876', role:'Editor',  status:'Pending',   lastUpdated:'2023-07-18', updatedBy:'manager', pendingChanges:2 },
-    // …etc
->>>>>>> 5cce5926a392c89b2562517b2ef6c450f80cbdc8
   ]);
 
   // form state
