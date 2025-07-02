@@ -40,6 +40,8 @@ const Support = () => {
     }
   ];
 
+  // bnbnb
+
   // Support tickets data
   const supportTickets = [
     {
