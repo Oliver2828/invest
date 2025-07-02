@@ -29,7 +29,8 @@ import PaymentMethods from "./components/UserDash-Components/PaymentMethods";
 import Statements from "./components/UserDash-Components/Statements";
 import Support from "./components/UserDash-Components/Support";
 
-import AdDashboard from "./pages/Admin/AdDashboard"
+// Admin Components
+import AdDashboard from "./pages/Admin/AdDashboard";
 import AdDashboardHome from './components/AdDashboard-components/AdDashboardHome';
 import Accounts from './components/AdDashboard-components/Accounts';
 import UpdateAccounts from './components/AdDashboard-components/UpdateAccounts';
@@ -38,8 +39,12 @@ import DeactiveAccounts from './components/AdDashboard-components/DeactiveAccoun
 function AppContent() {
   const location = useLocation();
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
+  const isAdminRoute     = location.pathname.startsWith('/admin');
+  // hide layout on both dashboard and admin routes
+  const hideGlobalLayout = isDashboardRoute || isAdminRoute;
 
   useEffect(() => {
+    // Cleanup for Google Translate banners/iframes
     const cleanup = () => {
       const oldBanner = document.querySelector("iframe.goog-te-banner-frame");
       if (oldBanner) {
@@ -64,8 +69,8 @@ function AppContent() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isDashboardRoute && <Navbar />}
-      {!isDashboardRoute && <ChatBot />}
+      {!hideGlobalLayout && <Navbar />}
+      {!hideGlobalLayout && <ChatBot />}
       <ScrollToTopButton />
 
       <main className="flex-grow">
@@ -83,35 +88,32 @@ function AppContent() {
             <Route index element={<DashboardHome />} />
             <Route path="portfolio" element={<Portfolio />} />
             <Route path="investments">
-              <Route path="active" element={<ActiveInvestments />} />
+              <Route path="active"    element={<ActiveInvestments />} />
               <Route path="completed" element={<CompletedInvestments />} />
-              <Route path="new" element={<NewInvestment />} />
+              <Route path="new"       element={<NewInvestment />} />
             </Route>
             <Route path="market" element={<MarketData />} />
             <Route path="security" element={<Security />} />
             <Route path="settings">
-              <Route path="profile" element={<ProfileSettings />} />
+              <Route path="profile"       element={<ProfileSettings />} />
               <Route path="notifications" element={<NotificationSettings />} />
-              <Route path="payments" element={<PaymentMethods />} />
-              <Route path="statements" element={<Statements />} />
+              <Route path="payments"      element={<PaymentMethods />} />
+              <Route path="statements"    element={<Statements />} />
             </Route>
             <Route path="support" element={<Support />} />
           </Route>
 
+          {/* Admin Routes */}
           <Route path="/admin" element={<AdDashboard />}>
-            <Route index element={<AdDashboardHome />} />
+            <Route index        element={<AdDashboardHome />} />
             <Route path="accounts" element={<Accounts />} />
-            <Route path="update" element={<UpdateAccounts />} />
+            <Route path="update"   element={<UpdateAccounts />} />
             <Route path="deactive" element={<DeactiveAccounts />} />
-
-
-
-            
           </Route>
         </Routes>
       </main>
 
-      {!isDashboardRoute && <Footer />}
+      {!hideGlobalLayout && <Footer />}
     </div>
   );
 }
