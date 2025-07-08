@@ -29,9 +29,73 @@ const UpdateAccountsDashboard = () => {
 
   // sample accounts
   const [accounts, setAccounts] = useState([
-    { id:'1', name:'John Doe',    email:'john@example.com',  phone:'555-1234', role:'User',    status:'Active',    lastUpdated:'2023-07-15', updatedBy:'admin', pendingChanges:0 },
-    { id:'2', name:'Sarah Smith', email:'sarah@example.com', phone:'555-9876', role:'Editor',  status:'Pending',   lastUpdated:'2023-07-18', updatedBy:'manager', pendingChanges:2 },
-    // …etc
+    {
+      id: '1',
+      name: 'John Doe',
+      email: 'john@example.com',
+      phone: '(555) 123-4567',
+      role: 'User',
+      status: 'Active',
+      lastUpdated: '2023-07-15',
+      updatedBy: 'admin@example.com',
+      pendingChanges: 0
+    },
+    {
+      id: '2',
+      name: 'Sarah Smith',
+      email: 'sarah@example.com',
+      phone: '(555) 987-6543',
+      role: 'Editor',
+      status: 'Pending',
+      lastUpdated: '2023-07-18',
+      updatedBy: 'manager@example.com',
+      pendingChanges: 2
+      // bbb
+    },
+    {
+      id: '3',
+      name: 'Mike Johnson',
+      email: 'mike@example.com',
+      phone: '(555) 456-7890',
+      role: 'Admin',
+      status: 'Active',
+      lastUpdated: '2023-07-10',
+      updatedBy: 'admin@example.com',
+      pendingChanges: 0
+    },
+    {
+      id: '4',
+      name: 'Emily Wilson',
+      email: 'emily@example.com',
+      phone: '(555) 234-5678',
+      role: 'User',
+      status: 'Suspended',
+      lastUpdated: '2023-07-05',
+      updatedBy: 'admin@example.com',
+      pendingChanges: 1
+    },
+    {
+      id: '5',
+      name: 'David Brown',
+      email: 'david@example.com',
+      phone: '(555) 876-5432',
+      role: 'Editor',
+      status: 'Active',
+      lastUpdated: '2023-07-12',
+      updatedBy: 'manager@example.com',
+      pendingChanges: 0
+    },
+    {
+      id: '6',
+      name: 'Lisa Chen',
+      email: 'lisa@example.com',
+      phone: '(555) 345-6789',
+      role: 'User',
+      status: 'Pending',
+      lastUpdated: '2023-07-19',
+      updatedBy: 'admin@example.com',
+      pendingChanges: 3
+    },
   ]);
 
   // form state
