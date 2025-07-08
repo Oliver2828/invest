@@ -73,22 +73,23 @@ const Register = () => {
           setIsLogin(true);
         }
       } else {
-        // Login
-        const res = await fetch('http://localhost:500/api/users/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: formData.email, password: formData.password })
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          setError(data.message || 'Login failed');
-        } else {
-          setSuccess('Login successful!');
-          setTimeout(() => {
-            navigate('/dashboard');
-          }, 1000);
-        }
-      }
+  // Login
+  const res = await fetch('http://localhost:500/api/users/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: formData.email, password: formData.password })
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    setError(data.message || 'Login failed');
+  } else {
+    setSuccess('Login successful!');
+    localStorage.setItem('userEmail', formData.email); // <-- Save email for dashboard fetch
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 1000);
+  }
+}
     } catch (err) {
       setError('Network error');
     }
