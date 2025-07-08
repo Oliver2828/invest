@@ -1,9 +1,7 @@
-// === src/components/Login.jsx ===
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FiUser, FiLock, FiEye, FiEyeOff, FiMail, FiPhone } from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { FaApple, FaFacebook } from 'react-icons/fa';
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,15 +12,63 @@ const Login = () => {
     name: '',
     phone: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login/register logic
-    console.log(isLogin ? 'Logging in...' : 'Registering...', formData);
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    try {
+      if (isLogin) {
+        // Login
+        const res = await fetch('http://localhost:500/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, password: formData.password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || 'Login failed');
+        } else {
+          setSuccess('Login successful!');
+          // Redirect to dashboard after successful login
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+        }
+      } else {
+        // Register
+        const res = await fetch('http://localhost:500/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+            phone: formData.phone
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || 'Registration failed');
+        } else {
+          setSuccess('Registration successful! You can now sign in.');
+          setIsLogin(true);
+        }
+      }
+    } catch (err) {
+      setError('Network error');
+    }
+    setLoading(false);
   };
 
   return (
@@ -83,6 +129,13 @@ const Login = () => {
               </button>
             </div>
 
+            {error && (
+              <div className="mb-4 text-red-600 text-center font-medium">{error}</div>
+            )}
+            {success && (
+              <div className="mb-4 text-green-600 text-center font-medium">{success}</div>
+            )}
+
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
                 {!isLogin && (
@@ -104,7 +157,6 @@ const Login = () => {
                         value={formData.name}
                         onChange={handleChange}
                         className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                       
                         required={!isLogin}
                       />
                     </div>
@@ -132,7 +184,6 @@ const Login = () => {
                         value={formData.phone}
                         onChange={handleChange}
                         className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                       
                         required={!isLogin}
                       />
                     </div>
@@ -152,7 +203,6 @@ const Login = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    
                     required
                   />
                 </div>
@@ -170,7 +220,6 @@ const Login = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-             
                     required
                   />
                   <button
@@ -200,6 +249,7 @@ const Login = () => {
                     <input
                       type="checkbox"
                       className="h-4 w-4 text-red-600 rounded focus:ring-red-500 border-gray-300"
+                      required
                     />
                     <span className="ml-2 text-gray-700">
                       I agree to the <a href="#" className="text-red-600 hover:underline">Terms of Service</a> and 
@@ -214,8 +264,9 @@ const Login = () => {
                 className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg font-bold"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                disabled={loading}
               >
-                {isLogin ? 'Sign In' : 'Create Account'}
+                {loading ? (isLogin ? 'Signing In...' : 'Creating Account...') : (isLogin ? 'Sign In' : 'Create Account')}
               </motion.button>
             </form>
 
@@ -223,53 +274,18 @@ const Login = () => {
               <p className="text-gray-600">
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                 <button
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setError('');
+                    setSuccess('');
+                  }}
                   className="font-medium text-red-600 hover:underline"
                 >
                   {isLogin ? 'Sign up now' : 'Sign in'}
                 </button>
               </p>
             </div>
-
-            <div className="mt-8">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
-                >
-                  <FcGoogle className="text-xl" />
-                  <span className="mt-1 text-xs text-gray-500">Google</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
-                >
-                  <FaApple className="text-xl text-gray-800" />
-                  <span className="mt-1 text-xs text-gray-500">Apple</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-blue-500/20 hover:bg-blue-50/50"
-                >
-                  <FaFacebook className="text-xl text-blue-600" />
-                  <span className="mt-1 text-xs text-gray-500">Facebook</span>
-                </motion.button>
-              </div>
-            </div>
+            {/* Social login buttons removed */}
           </div>
         </motion.div>
       </div>

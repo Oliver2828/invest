@@ -1,29 +1,98 @@
-// === src/components/Register.jsx ===
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiUser, FiLock, FiEye, FiEyeOff, FiMail, FiPhone 
-} from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
-import { FaApple, FaFacebook } from 'react-icons/fa';
+import { FiUser, FiLock, FiEye, FiEyeOff, FiMail, FiPhone } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
-export const Register = () => {
+const Register = () => {
   const [isLogin, setIsLogin] = useState(false); // Default to register view
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    confirmPassword: '',
     name: '',
     phone: ''
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const navigate = useNavigate(); // <-- Add this line
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  // Password validation: 7+ chars, starts with capital, has number, has special char
+  const validatePassword = (password) => {
+    const minLength = password.length >= 7;
+    const startsWithCapital = /^[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    return minLength && startsWithCapital && hasNumber && hasSpecial;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Registering...', formData);
+    setError('');
+    setSuccess('');
+    setLoading(true);
+
+    if (!isLogin) {
+      // Registration validation
+      if (formData.password !== formData.confirmPassword) {
+        setError('Passwords do not match');
+        setLoading(false);
+        return;
+      }
+      if (!validatePassword(formData.password)) {
+        setError('Password must be at least 7 characters, start with a capital letter, include a number and a special character.');
+        setLoading(false);
+        return;
+      }
+    }
+
+    try {
+      if (!isLogin) {
+        // Registration
+        const res = await fetch('http://localhost:500/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+            phone: formData.phone
+          })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || 'Registration failed');
+        } else {
+          setSuccess('Registration successful! You can now sign in.');
+          setFormData({ email: '', password: '', confirmPassword: '', name: '', phone: '' });
+          setIsLogin(true);
+        }
+      } else {
+        // Login
+        const res = await fetch('http://localhost:500/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, password: formData.password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || 'Login failed');
+        } else {
+          setSuccess('Login successful!');
+          setTimeout(() => {
+            navigate('/dashboard');
+          }, 1000);
+        }
+      }
+    } catch (err) {
+      setError('Network error');
+    }
+    setLoading(false);
   };
 
   return (
@@ -84,6 +153,13 @@ export const Register = () => {
               </button>
             </div>
 
+            {error && (
+              <div className="mb-4 text-red-600 text-center font-medium">{error}</div>
+            )}
+            {success && (
+              <div className="mb-4 text-green-600 text-center font-medium">{success}</div>
+            )}
+
             <form onSubmit={handleSubmit}>
               <AnimatePresence mode="wait">
                 {!isLogin && (
@@ -106,7 +182,6 @@ export const Register = () => {
                           value={formData.name}
                           onChange={handleChange}
                           className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                        
                           required
                         />
                       </div>
@@ -150,13 +225,12 @@ export const Register = () => {
                     value={formData.email}
                     onChange={handleChange}
                     className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                  
                     required
                   />
                 </div>
               </div>
 
-              <div className="mb-6">
+              <div className="mb-4">
                 <label className="block text-gray-700 mb-2">Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -168,7 +242,6 @@ export const Register = () => {
                     value={formData.password}
                     onChange={handleChange}
                     className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-                    
                     required
                   />
                   <button
@@ -184,9 +257,28 @@ export const Register = () => {
                   </button>
                 </div>
                 <div className="mt-1 text-sm text-gray-500">
-                  Use 8+ characters with a mix of letters, numbers & symbols
+                  Password must be at least 7 characters, start with a capital letter, include a number and a special character.
                 </div>
               </div>
+
+              {!isLogin && (
+                <div className="mb-4">
+                  <label className="block text-gray-700 mb-2">Confirm Password</label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <FiLock className="text-gray-400" />
+                    </div>
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+                </div>
+              )}
 
               {!isLogin && (
                 <div className="mb-6">
@@ -209,8 +301,9 @@ export const Register = () => {
                 className="w-full py-3 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg font-bold"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
+                disabled={loading}
               >
-                {isLogin ? 'Sign In' : 'Create Account'}
+                {loading ? (isLogin ? 'Signing In...' : 'Creating Account...') : (isLogin ? 'Sign In' : 'Create Account')}
               </motion.button>
             </form>
 
@@ -218,7 +311,11 @@ export const Register = () => {
               <p className="text-gray-600">
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                 <button
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={() => {
+                    setIsLogin(!isLogin);
+                    setError('');
+                    setSuccess('');
+                  }}
                   className="font-medium text-red-600 hover:underline"
                 >
                   {isLogin ? 'Sign up now' : 'Sign in'}
@@ -226,51 +323,12 @@ export const Register = () => {
               </p>
             </div>
 
-            <div className="mt-8">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
-                </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
-                </div>
-              </div>
-
-              <div className="mt-6 grid grid-cols-3 gap-3">
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
-                >
-                  <FcGoogle className="text-xl" />
-                  <span className="mt-1 text-xs text-gray-500">Google</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-gray-300"
-                >
-                  <FaApple className="text-xl text-gray-800" />
-                  <span className="mt-1 text-xs text-gray-500">Apple</span>
-                </motion.button>
-
-                <motion.button
-                  whileHover={{ y: -3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full py-2.5 px-4 border border-gray-200 rounded-xl flex flex-col items-center justify-center transition-all duration-200 hover:shadow-sm hover:border-blue-500/20 hover:bg-blue-50/50"
-                >
-                  <FaFacebook className="text-xl text-blue-600" />
-                  <span className="mt-1 text-xs text-gray-500">Facebook</span>
-                </motion.button>
-              </div>
-            </div>
+    
           </div>
         </motion.div>
-
-        
       </div>
     </div>
   );
 };
+
 export default Register;
