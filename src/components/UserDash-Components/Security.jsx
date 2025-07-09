@@ -10,7 +10,7 @@ const Security = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [activeTab, setActiveTab] = useState('security');
   
-  // Mock security activity data
+  
   const securityActivities = [
     { id: 1, action: 'Login', device: 'iPhone 13 Pro', location: 'Lagos, Nigeria', time: '2 hours ago', status: 'success' },
     { id: 2, action: 'Password Change', device: 'MacBook Pro', location: 'Abuja, Nigeria', time: '1 day ago', status: 'success' },
