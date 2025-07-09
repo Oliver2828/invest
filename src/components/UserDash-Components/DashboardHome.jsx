@@ -1,5 +1,5 @@
 // === src/components/dashboard/DashboardHome.jsx ===
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   FiArrowUpRight, FiArrowDownRight, FiTrendingUp, FiDollarSign, 
   FiUser, FiBell, FiCreditCard, FiBarChart2, FiPieChart, FiShield, FiHome,
@@ -23,11 +23,75 @@ const fadeUp = {
   })
 };
 
+// ...existing imports and code...
+
 const DashboardHome = () => {
   const [active, setActive] = useState('overview');
+  const [accountsData, setAccountsData] = useState([]);
+  const [recentActivity, setRecentActivity] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [activityLoading, setActivityLoading] = useState(true);
 
   const formatCurrency = amount =>
     new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+
+  useEffect(() => {
+    // Fetch user accounts from backend
+    const fetchAccounts = async () => {
+      setLoading(true);
+      try {
+        const email = localStorage.getItem('userEmail');
+        if (!email) {
+          setAccountsData([]);
+          setLoading(false);
+          return;
+        }
+        const res = await fetch(`http://localhost:500/api/users/me?email=${encodeURIComponent(email)}`);
+        if (!res.ok) {
+          setAccountsData([]);
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
+        setAccountsData(data.accounts || []);
+      } catch (err) {
+        setAccountsData([]);
+      }
+      setLoading(false);
+    };
+    fetchAccounts();
+  }, []);
+
+  useEffect(() => {
+    // Fetch recent activity from backend
+    const fetchActivity = async () => {
+      setActivityLoading(true);
+      try {
+        const email = localStorage.getItem('userEmail');
+        if (!email) {
+          setRecentActivity([]);
+          setActivityLoading(false);
+          return;
+        }
+        // Replace with your actual backend endpoint for activity
+        const res = await fetch(`http://localhost:500/api/users/activity?email=${encodeURIComponent(email)}`);
+        if (!res.ok) {
+          setRecentActivity([]);
+          setActivityLoading(false);
+          return;
+        }
+        const data = await res.json();
+        setRecentActivity(Array.isArray(data) ? data : []);
+      } catch (err) {
+        setRecentActivity([]);
+      }
+      setActivityLoading(false);
+    };
+    fetchActivity();
+  }, []);
+
+  // Helper to get account by type
+  const getAccount = (type) => accountsData.find(acc => acc.type?.toLowerCase() === type);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-red-50">
@@ -38,15 +102,6 @@ const DashboardHome = () => {
             <h1 className="text-3xl font-bold text-gray-900">InvestNow</h1>
             <p className="text-red-600">Smart investments for your future</p>
           </div>
-          {/* <div className="flex items-center space-x-4">
-            <motion.button whileHover={{ scale: 1.1 }} className="relative p-2 rounded-full hover:bg-red-50 transition-colors">
-              <FiBell className="h-6 w-6 text-gray-600" />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full" />
-            </motion.button>
-            <motion.div whileHover={{ scale: 1.05 }} className="w-10 h-10 rounded-full bg-white border-2 border-red-100 flex items-center justify-center text-red-600">
-              <FiUser className="h-5 w-5" />
-            </motion.div>
-          </div> */}
         </motion.div>
 
         {/* Tabs */}
@@ -72,8 +127,25 @@ const DashboardHome = () => {
         </LayoutGroup>
 
         {/* Sections */}
-        {active === 'overview' && <OverviewSection formatCurrency={formatCurrency} />}
-        {active === 'accounts'  && <AccountsSection formatCurrency={formatCurrency} />}
+        {active === 'overview' && (
+          <OverviewSection
+            formatCurrency={formatCurrency}
+            loading={loading}
+            savings={getAccount('savings')}
+            retirement={getAccount('retirement')}
+            stocks={getAccount('stocks')}
+            recentActivity={recentActivity}
+            activityLoading={activityLoading}
+          />
+        )}
+        {active === 'accounts' && (
+          <AccountsSection
+            formatCurrency={formatCurrency}
+            loading={loading}
+            savings={getAccount('savings')}
+            retirement={getAccount('retirement')}
+          />
+        )}
         {active === 'invest'    && <InvestSection formatCurrency={formatCurrency} />}
         {active === 'reports'   && <ReportsSection formatCurrency={formatCurrency} />}
       </div>
@@ -81,12 +153,33 @@ const DashboardHome = () => {
   );
 };
 
-const OverviewSection = ({ formatCurrency }) => {
+// Overview: Portfolio Value = savings, Today's Gain = retirement, Dividends = stocks
+const OverviewSection = ({ formatCurrency, loading, savings, retirement, stocks, recentActivity, activityLoading }) => {
   const metrics = [
-    { title: "Portfolio Value",      value: formatCurrency(42689.50), change: "+12.4%", icon: <FiDollarSign /> },
-    { title: "Today's Gain",         value: formatCurrency(1240.50),  change: "+3.2%",  icon: <FiTrendingUp /> },
-    { title: "Dividends",             value: formatCurrency(450.25),   change: "+8.1%",  icon: <FiCreditCard /> },
-    { title: "Active Investments",    value: "7",                       change: "+2",      icon: <FiPieChart /> },
+    {
+      title: "Portfolio Value",
+      value: loading ? '...' : formatCurrency(savings?.balance || 0),
+      change: "+12.4%",
+      icon: <FiDollarSign />
+    },
+    {
+      title: "Today's Gain",
+      value: loading ? '...' : formatCurrency(retirement?.balance || 0),
+      change: "+3.2%",
+      icon: <FiTrendingUp />
+    },
+    {
+      title: "Dividends",
+      value: loading ? '...' : formatCurrency(stocks?.balance || 0),
+      change: "+8.1%",
+      icon: <FiCreditCard />
+    },
+    {
+      title: "Active Investments",
+      value: loading ? '...' : "7",
+      change: "+2",
+      icon: <FiPieChart />
+    },
   ];
 
   return (
@@ -109,31 +202,30 @@ const OverviewSection = ({ formatCurrency }) => {
       </motion.div>
 
       <motion.div variants={fadeUp} custom={7} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-
         <motion.div variants={fadeUp} custom={9} whileHover={{ scale: 1.02 }} className="bg-white rounded-2xl border border-red-100 shadow-sm p-6">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
           <div className="space-y-4">
-            {[
-              { id: 1, action: "Investment", fund: "Tech Growth Fund",      amount: formatCurrency(2500),  date: "Today, 10:30 AM" },
-              { id: 2, action: "Deposit",    fund: "Primary Account",      amount: formatCurrency(1500),  date: "Yesterday, 2:15 PM" },
-              { id: 3, action: "Dividend",   fund: "Global Dividend Stocks", amount: formatCurrency(245.75), date: "May 15, 2023" },
-              { id: 4, action: "Investment", fund: "Green Energy ETF",     amount: formatCurrency(3200),  date: "May 10, 2023" }
-            ].map((act, i) => (
-              <motion.div key={act.id} variants={fadeUp} custom={i + 10} className="flex items-start pb-4 border-b border-red-50 last:border-0">
-                <div className="bg-red-100 text-red-600 p-2 rounded-lg mr-4">
-                  <FiDollarSign />
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between">
-                    <h3 className="font-medium text-gray-800">{act.action}</h3>
-                    <span className="font-medium">{act.amount}</span>
+            {activityLoading ? (
+              <div className="text-gray-500">Loading...</div>
+            ) : recentActivity.length === 0 ? (
+              <div className="text-gray-500">No recent activity</div>
+            ) : (
+              recentActivity.map((act, i) => (
+                <motion.div key={act.id || i} variants={fadeUp} custom={i + 10} className="flex items-start pb-4 border-b border-red-50 last:border-0">
+                  <div className="bg-red-100 text-red-600 p-2 rounded-lg mr-4">
+                    <FiDollarSign />
                   </div>
-                  <p className="text-sm text-gray-600">{act.fund}</p>
-                  <p className="text-xs text-gray-500 mt-1">{act.date}</p>
-                </div>
-              </motion.div>
-            ))}
+                  <div className="flex-1">
+                    <div className="flex justify-between">
+                      <h3 className="font-medium text-gray-800">{act.action}</h3>
+                      <span className="font-medium">{formatCurrency(act.amount)}</span>
+                    </div>
+                    <p className="text-sm text-gray-600">{act.fund}</p>
+                    <p className="text-xs text-gray-500 mt-1">{act.date}</p>
+                  </div>
+                </motion.div>
+              ))
+            )}
           </div>
         </motion.div>
       </motion.div>
@@ -141,10 +233,16 @@ const OverviewSection = ({ formatCurrency }) => {
   );
 };
 
-const AccountsSection = ({ formatCurrency }) => {
+
+
+// Accounts: Primary Investment = savings, Retirement Savings = retirement
+const AccountsSection = ({ formatCurrency, loading, savings, retirement }) => {
   const accounts = [
     {
-      id: 1, name: "Primary Investment", number: "**** 4832", balance: 42689.50,
+      id: 1,
+      name: "Primary Investment",
+      number: "**** 4832",
+      balance: loading ? 0 : (savings?.balance || 0),
       growth: 12.4,
       transactions: [
         { id: 1, name: "Tech Growth Fund",    date: "May 15, 2023", amount: 2500.00, type: "investment" },
@@ -154,7 +252,10 @@ const AccountsSection = ({ formatCurrency }) => {
       color: "bg-gradient-to-br from-white to-red-50"
     },
     {
-      id: 2, name: "Retirement Savings", number: "**** 7194", balance: 18950.25,
+      id: 2,
+      name: "Retirement Savings",
+      number: "**** 7194",
+      balance: loading ? 0 : (retirement?.balance || 0),
       growth: 8.2,
       transactions: [
         { id: 1, name: "401k Contribution", date: "May 1, 2023", amount: 1250.00, type: "deposit" },
@@ -179,10 +280,10 @@ const AccountsSection = ({ formatCurrency }) => {
               </div>
             </div>
             <div className="mt-4">
-              <p className="text-3xl font-bold text-gray-900">{formatCurrency(acct.balance)}</p>
+              <p className="text-3xl font-bold text-gray-900">{loading ? '...' : formatCurrency(acct.balance)}</p>
               <p className="text-green-600 font-medium flex items-center mt-1">
                 <FiArrowUpRight className="mr-1" />
-                {formatCurrency(acct.balance * acct.growth / 100)} growth
+                {loading ? '...' : formatCurrency(acct.balance * acct.growth / 100)} growth
               </p>
             </div>
           </div>
