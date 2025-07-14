@@ -35,6 +35,7 @@ import AdDashboardHome from './components/AdDashboard-components/AdDashboardHome
 import Accounts from './components/AdDashboard-components/Accounts';
 import UpdateAccounts from './components/AdDashboard-components/UpdateAccounts';
 import DeactiveAccounts from './components/AdDashboard-components/DeactiveAccounts';
+import AdSimulationControl from './components/AdDashboard-components/AdminSimulationControl';
 
 function AppContent() {
   const location = useLocation();
@@ -109,6 +110,7 @@ function AppContent() {
             <Route path="accounts" element={<Accounts />} />
             <Route path="update"   element={<UpdateAccounts />} />
             <Route path="deactive" element={<DeactiveAccounts />} />
+            <Route path="simulation-control" element={<AdSimulationControl />} />
           </Route>
         </Routes>
       </main>

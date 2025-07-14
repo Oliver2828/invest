@@ -1,85 +1,128 @@
-import React, { useState } from 'react';
-import { FaEye, FaEyeSlash, FaChartLine, FaCoins, FaHandHoldingUsd, FaSearch, FaEllipsisV, FaArrowUp, FaArrowDown, FaGift, FaPlus, FaExchangeAlt } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaEye, FaEyeSlash, FaChartLine, FaCoins, FaHandHoldingUsd, FaSearch, FaEllipsisV, FaArrowUp, FaGift, FaPlus, FaExchangeAlt } from 'react-icons/fa';
 
 const Portfolio = () => {
   const [showValues, setShowValues] = useState(false);
   const [activeTab, setActiveTab] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [accounts, setAccounts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [liveTotal, setLiveTotal] = useState(0);
+  const [liveAssets, setLiveAssets] = useState([]);
+  const [simulationActive, setSimulationActive] = useState(false);
 
-  const portfolioItems = [
-    { 
-      id: 1,
-      title: 'Mutual Funds', 
-      value: 1250000,
-      change: 5.3,
-      changeType: 'positive',
-      currency: 'NGN',
-      icon: <FaChartLine className="text-red-600" />,
-      chartData: [30, 40, 35, 50, 45, 60, 55, 70, 65, 80, 75, 90]
-    },
-    { 
-      id: 2,
-      title: 'Trust Fund', 
-      value: 875000,
-      change: 2.1,
-      changeType: 'positive',
-      currency: 'NGN',
-      icon: <FaHandHoldingUsd className="text-red-600" />,
-      chartData: [40, 35, 45, 30, 50, 40, 60, 50, 70, 60, 80, 70]
-    },
-    { 
-      id: 3,
-      title: 'Securities', 
-      value: 2100000,
-      change: -1.8,
-      changeType: 'negative',
-      currency: 'NGN',
-      icon: <FaCoins className="text-red-600" />,
-      chartData: [70, 65, 75, 60, 80, 70, 90, 75, 85, 70, 65, 60]
-    },
-    { 
-      id: 4,
-      title: 'Stocks', 
-      value: 450000,
-      change: 8.2,
-      changeType: 'positive',
-      currency: 'NGN',
-      icon: <FaChartLine className="text-red-600" />,
-      chartData: [20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75]
-    },
-    { 
-      id: 5,
-      title: 'Bonds', 
-      value: 680000,
-      change: 1.5,
-      changeType: 'positive',
-      currency: 'NGN',
-      icon: <FaCoins className="text-red-600" />,
-      chartData: [65, 60, 70, 65, 75, 70, 80, 75, 85, 80, 75, 70]
-    },
-    { 
-      id: 6,
-      title: 'Crypto', 
-      value: 320000,
-      change: -3.4,
-      changeType: 'negative',
-      currency: 'NGN',
-      icon: <FaCoins className="text-red-600" />,
-      chartData: [90, 80, 85, 75, 70, 65, 60, 55, 65, 70, 75, 70]
-    },
-  ];
+  // Fetch accounts from backend
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      setLoading(true);
+      try {
+        const email = localStorage.getItem('userEmail');
+        if (!email) {
+          setAccounts([]);
+          setLoading(false);
+          return;
+        }
+        const res = await fetch(`http://localhost:500/api/users/me?email=${encodeURIComponent(email)}`);
+        if (!res.ok) {
+          setAccounts([]);
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
+        setAccounts(data.accounts || []);
+      } catch (err) {
+        setAccounts([]);
+      }
+      setLoading(false);
+    };
+    fetchAccounts();
+  }, []);
 
-  const transactions = [
-    { id: 1, type: 'Buy', asset: 'Apple Inc.', amount: 150000, date: '2023-06-15', status: 'Completed' },
-    { id: 2, type: 'Sell', asset: 'Tesla Inc.', amount: 85000, date: '2023-06-12', status: 'Completed' },
-    { id: 3, type: 'Dividend', asset: 'Mutual Funds', amount: 12500, date: '2023-06-10', status: 'Completed' },
-    { id: 4, type: 'Buy', asset: 'Microsoft Corp.', amount: 95000, date: '2023-06-08', status: 'Pending' },
-  ];
+  // Live simulation for total portfolio value (only increases)
+  useEffect(() => {
+    if (!accounts.length || !simulationActive) return;
+    let baseTotal = accounts.reduce((sum, acc) => sum + (acc.balance || 0), 0);
+    setLiveTotal(baseTotal);
+    const interval = setInterval(() => {
+      const change = Math.random() * 500; // always positive
+      setLiveTotal(prev => prev + change);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [accounts, simulationActive]);
+
+  // Live simulation for each asset (only increases)
+  useEffect(() => {
+    // Map backend accounts to asset cards
+    const assetMap = [
+      { key: 'mutual funds', title: 'Mutual Funds', icon: <FaChartLine className="text-red-600" /> },
+      { key: 'trust fund', title: 'Trust Fund', icon: <FaHandHoldingUsd className="text-red-600" /> },
+      { key: 'securities', title: 'Securities', icon: <FaCoins className="text-red-600" /> },
+      { key: 'stocks', title: 'Stocks', icon: <FaChartLine className="text-red-600" /> },
+      { key: 'bonds', title: 'Bonds', icon: <FaCoins className="text-red-600" /> },
+      { key: 'crypto', title: 'Crypto', icon: <FaCoins className="text-red-600" /> },
+    ];
+    let assets = assetMap.map((asset, idx) => {
+      const acc = accounts.find(a => a.type && a.type.toLowerCase() === asset.key);
+      return {
+        id: idx + 1,
+        title: asset.title,
+        value: acc ? acc.balance : Math.floor(Math.random() * 100000 + 20000),
+        change: (Math.random() * 5).toFixed(1),
+        changeType: 'positive',
+        currency: 'USD',
+        icon: asset.icon,
+        chartData: Array.from({ length: 12 }, () => Math.floor(Math.random() * 100 + 20))
+      };
+    });
+    setLiveAssets(assets);
+
+    if (!simulationActive) return;
+    // Simulate live increases for each asset
+    const interval = setInterval(() => {
+      setLiveAssets(prev =>
+        prev.map(asset => {
+          const change = Math.random() * 500; // always positive
+          const newValue = asset.value + change;
+          const newChange = (Math.random() * 5).toFixed(1);
+          const newChartData = asset.chartData
+            .slice(1)
+            .concat([Math.floor(newValue / 1000 + Math.random() * 100)]);
+          return {
+            ...asset,
+            value: newValue,
+            change: newChange,
+            changeType: 'positive',
+            chartData: newChartData
+          };
+        })
+      );
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [accounts, simulationActive]);
+
+  const filteredItems = liveAssets.filter(item => {
+    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
+    if (activeTab === 'all') return matchesSearch;
+    if (activeTab === 'positive') return matchesSearch && item.changeType === 'positive';
+    return matchesSearch;
+  });
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0
+    }).format(amount);
+  };
+
+  // Portfolio summary: liveTotal from backend accounts
+  const totalValue = liveTotal;
+  // Simulate totalChange for live effect (always positive)
+  const totalChange = (Math.random() * 0.02 * totalValue);
 
   // Custom chart components
-  const MiniBarChart = ({ data, positive }) => {
+  const MiniBarChart = ({ data }) => {
     const maxValue = Math.max(...data);
-    
     return (
       <div className="h-16 flex items-end mb-2">
         {data.map((value, index) => (
@@ -88,7 +131,7 @@ const Portfolio = () => {
             className="flex-1 mx-0.5"
             style={{ height: `${(value / maxValue) * 100}%` }}
           >
-            <div className={`h-full rounded-t ${positive ? 'bg-green-500' : 'bg-red-500'}`}></div>
+            <div className="h-full rounded-t bg-green-500"></div>
           </div>
         ))}
       </div>
@@ -98,7 +141,6 @@ const Portfolio = () => {
   const PortfolioPerformanceChart = () => {
     const performanceData = [800, 950, 1100, 1250, 1400, 1650];
     const maxValue = Math.max(...performanceData);
-    
     return (
       <div className="h-48 flex items-end gap-1">
         {performanceData.map((value, index) => (
@@ -127,7 +169,6 @@ const Portfolio = () => {
       { name: 'Mutual Funds', value: 15, color: 'bg-red-500' },
       { name: 'Real Estate', value: 10, color: 'bg-red-400' },
     ];
-    
     return (
       <div className="flex flex-col gap-2">
         {allocations.map((item, index) => (
@@ -151,28 +192,23 @@ const Portfolio = () => {
     );
   };
 
-  const filteredItems = portfolioItems.filter(item => {
-    const matchesSearch = item.title.toLowerCase().includes(searchTerm.toLowerCase());
-    if (activeTab === 'all') return matchesSearch;
-    if (activeTab === 'positive') return matchesSearch && item.changeType === 'positive';
-    if (activeTab === 'negative') return matchesSearch && item.changeType === 'negative';
-    return matchesSearch;
-  });
-
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-NG', {
-      style: 'currency',
-      currency: 'NGN',
-      minimumFractionDigits: 0
-    }).format(amount);
-  };
-
-  const totalValue = portfolioItems.reduce((sum, item) => sum + item.value, 0);
-  const totalChange = portfolioItems.reduce((sum, item) => sum + (item.value * item.change / 100), 0);
-
   return (
     <div className="min-h-screen bg-white px-4 py-8 font-sans text-gray-800">
       <div className="max-w-6xl mx-auto">
+        {/* Admin Simulation Control */}
+        <div className="mb-6 flex justify-end">
+          <button
+            className={`px-6 py-2 rounded-lg font-bold transition-colors ${
+              simulationActive
+                ? 'bg-green-600 text-white hover:bg-green-700'
+                : 'bg-red-600 text-white hover:bg-red-700'
+            }`}
+            onClick={() => setSimulationActive(!simulationActive)}
+          >
+            {simulationActive ? 'Stop Live Simulation' : 'Start Live Simulation'}
+          </button>
+        </div>
+
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
@@ -198,7 +234,7 @@ const Portfolio = () => {
               <h2 className="text-xl font-semibold mb-2 text-red-800">Portfolio Summary</h2>
               <div className="flex items-center">
                 <h3 className="text-3xl md:text-4xl font-bold mr-3 text-gray-900">
-                  {showValues ? formatCurrency(totalValue) : '₦•••••••'}
+                  {showValues ? formatCurrency(totalValue) : '$•••••••'}
                 </h3>
                 <button 
                   onClick={() => setShowValues(!showValues)}
@@ -207,8 +243,8 @@ const Portfolio = () => {
                   {showValues ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
-              <div className={`flex items-center mt-2 ${totalChange >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {totalChange >= 0 ? <FaArrowUp /> : <FaArrowDown />}
+              <div className="flex items-center mt-2 text-green-600">
+                <FaArrowUp />
                 <span className="ml-1">
                   {formatCurrency(Math.abs(totalChange))} ({((totalChange / totalValue) * 100).toFixed(2)}%) today
                 </span>
@@ -219,13 +255,13 @@ const Portfolio = () => {
               <div className="bg-white p-3 rounded-lg border border-red-100">
                 <p className="text-sm text-gray-600">Gainers</p>
                 <p className="text-xl font-bold text-green-600">
-                  {portfolioItems.filter(i => i.changeType === 'positive').length}
+                  {liveAssets.filter(i => i.changeType === 'positive').length}
                 </p>
               </div>
               <div className="bg-white p-3 rounded-lg border border-red-100">
                 <p className="text-sm text-gray-600">Losers</p>
                 <p className="text-xl font-bold text-red-600">
-                  {portfolioItems.filter(i => i.changeType === 'negative').length}
+                  0
                 </p>
               </div>
             </div>
@@ -259,16 +295,6 @@ const Portfolio = () => {
               onClick={() => setActiveTab('positive')}
             >
               Gainers
-            </button>
-            <button 
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                activeTab === 'negative' 
-                  ? 'bg-red-600 text-white' 
-                  : 'bg-white text-gray-700 hover:bg-red-50 border border-red-200'
-              }`}
-              onClick={() => setActiveTab('negative')}
-            >
-              Losers
             </button>
           </div>
           
@@ -311,18 +337,16 @@ const Portfolio = () => {
 
                 <div className="mb-4">
                   <p className="text-2xl font-bold text-gray-900 mb-1">
-                    {showValues ? formatCurrency(item.value) : '₦•••••••'}
+                    {showValues ? formatCurrency(item.value) : '$•••••••'}
                   </p>
-                  <div className={`flex items-center text-sm ${
-                    item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {item.changeType === 'positive' ? <FaArrowUp /> : <FaArrowDown />}
+                  <div className="flex items-center text-sm text-green-600">
+                    <FaArrowUp />
                     <span className="ml-1">{Math.abs(item.change)}%</span>
                     <span className="text-red-600 ml-2">this month</span>
                   </div>
                 </div>
 
-                <MiniBarChart data={item.chartData} positive={item.changeType === 'positive'} />
+                <MiniBarChart data={item.chartData} />
               </div>
               
               <div className="bg-red-50 px-5 py-3 flex justify-between border-t border-red-100">
@@ -338,55 +362,6 @@ const Portfolio = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Recent Transactions */}
-          <div className="bg-white rounded-2xl shadow-md p-6 border border-red-100">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-semibold text-red-700">Recent Transactions</h2>
-              <button className="text-red-600 font-medium hover:text-red-800">
-                View All
-              </button>
-            </div>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-red-50">
-                  <tr>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-700">Type</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-700">Asset</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-700">Amount</th>
-                    <th className="py-3 px-4 text-left text-sm font-semibold text-red-700">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-red-100">
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id} className="hover:bg-red-50">
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          transaction.type === 'Buy' ? 'bg-blue-100 text-blue-700' : 
-                          transaction.type === 'Sell' ? 'bg-red-100 text-red-700' : 
-                          'bg-green-100 text-green-700'
-                        }`}>
-                          {transaction.type}
-                        </span>
-                      </td>
-                      <td className="py-3 px-4 font-medium text-gray-900">{transaction.asset}</td>
-                      <td className="py-3 px-4 font-medium text-gray-900">
-                        {formatCurrency(transaction.amount)}
-                      </td>
-                      <td className="py-3 px-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          transaction.status === 'Completed' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                        }`}>
-                          {transaction.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-          
           {/* Asset Allocation */}
           <div className="bg-white rounded-2xl shadow-md p-6 border border-red-100">
             <div className="flex justify-between items-center mb-6">

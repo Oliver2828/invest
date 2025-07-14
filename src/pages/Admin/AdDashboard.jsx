@@ -204,6 +204,7 @@ export default function DashboardLayout() {
     { name: ' Admin', icon: FiHome, path: '/admin' },
     { name: 'Accounts', icon: FiPieChart, path: '/admin/accounts' },
     { name: 'Update Accounts', icon: FiPieChart, path: '/admin/update' },
+    { name: 'Simulation Control', icon: FiPieChart, path: '/admin/simulation-control' },
     
      { name: 'Deactive Accounts', icon: FiPieChart, path: '/admin/deactive' },
 

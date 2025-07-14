@@ -18,7 +18,7 @@ const Security = () => {
   useEffect(() => {
     if (userId) {
       axios
-        .get(`http://localhost:5000/api/users/me?userId=${userId}`)
+        .get(`http://localhost:500/api/users/me?userId=${userId}`)
         .then((res) => setUser(res.data))
         .catch((err) => console.error(err));
     }
@@ -27,7 +27,7 @@ const Security = () => {
   const handleProfileUpdate = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.put('http://localhost:5000/api/users/update-profile', {
+      const res = await axios.put('http://localhost:500/api/users/update-profile', {
         userId,
         name: user.name,
         phone: user.phone,
