@@ -29,23 +29,28 @@ const Login = () => {
 
     try {
       if (isLogin) {
-  // Login
-  const res = await fetch('http://localhost:500/api/users/login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: formData.email, password: formData.password })
-  });
-  const data = await res.json();
-  if (!res.ok) {
-    setError(data.message || 'Login failed');
-  } else {
-    setSuccess('Login successful!');
-    localStorage.setItem('userEmail', formData.email); // <-- Save email for dashboard fetch
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 1000);
-  }
-} else {
+        // Login
+        const res = await fetch('http://localhost:500/api/users/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: formData.email, password: formData.password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          setError(data.message || 'Login failed');
+        } else {
+          setSuccess('Login successful!');
+          localStorage.setItem('userEmail', formData.email); // Save email for dashboard fetch
+          localStorage.setItem('userRole', data.role); // Save role for later use
+          setTimeout(() => {
+            if (data.role === 'admin') {
+              navigate('/admin');
+            } else {
+              navigate('/dashboard');
+            }
+          }, 1000);
+        }
+      } else {
         // Register
         const res = await fetch('http://localhost:500/api/users/register', {
           method: 'POST',
