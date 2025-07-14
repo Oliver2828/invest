@@ -286,8 +286,7 @@ export default function DashboardLayout() {
         icon: FiDollarSign,
         submenu: [
           { name: 'Active Investments', path: '/dashboard/investments/active' },
-          { name: 'Completed Investments', path: '/dashboard/investments/completed' },
-          { name: 'New Investment', path: '/dashboard/investments/new' },
+        
         ],
       },
       { name: 'Market Data', icon: FiTrendingUp, path: '/dashboard/market' },
