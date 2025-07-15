@@ -59,7 +59,7 @@ const HeroSlider = () => {
     if (!paused) {
       intervalRef.current = setInterval(() => {
         setCurrentIndex(i => (i + 1) % slides.length);
-      }, 5000);
+      }, 15000);
     }
     return () => clearInterval(intervalRef.current);
   }, [paused, slides.length]);
