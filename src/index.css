@@ -1,3 +1,13 @@
+/* Reset default margins/padding and force root to fill screen */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;  /* extra belt-and-suspenders against horizontal scroll */
+}
+
+
 @import "tailwindcss";
 
 /* remove the top “Google Translate” banner iframe */
