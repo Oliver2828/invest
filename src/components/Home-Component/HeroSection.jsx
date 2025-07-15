@@ -1,12 +1,16 @@
 // === src/components/HeroSection.jsx ===
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  AreaChart, Area, XAxis, YAxis, CartesianGrid, 
-  Tooltip, ResponsiveContainer 
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer
 } from 'recharts';
 import { FiArrowUpRight, FiArrowDownRight, FiRefreshCw } from 'react-icons/fi';
 import InvestorAlert from './InvestorAlerts';
+
+// Import the video asset
+import invesVideo from '../assets/inves.mp4';
+import gridPattern from '../assets/grid-pattern.svg';
 
 const HeroSection = () => {
   const [activeTab, setActiveTab] = useState('btc');
@@ -23,7 +27,6 @@ const HeroSection = () => {
     { time: '20:00', price: 63200 },
     { time: '23:00', price: 63000 },
   ];
-  
   const priceChange = { value: 1000, percentage: 1.62 };
   const currentPrice = 63000;
   const isLoading = false;
@@ -54,15 +57,15 @@ const HeroSection = () => {
   ];
 
   const priceChangeColor = priceChange.percentage >= 0 ? 'text-green-400' : 'text-red-400';
-  const priceChangeIcon = priceChange.percentage >= 0 ? 
-    <FiArrowUpRight className="inline" /> : 
-    <FiArrowDownRight className="inline" />;
+  const priceChangeIcon = priceChange.percentage >= 0
+    ? <FiArrowUpRight className="inline" />
+    : <FiArrowDownRight className="inline" />;
 
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       {/* Video background */}
       <div className="absolute inset-0 z-0">
-        <video 
+        <video
           ref={videoRef}
           autoPlay
           loop
@@ -70,22 +73,25 @@ const HeroSection = () => {
           playsInline
           className="w-full h-full object-cover"
         >
-          <source src="/src/assets/inves.mp4" type="video/mp4" />
+          <source src={invesVideo} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         {/* Gradient overlay */}
-        <div className="absolute inset-0 "></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 to-black/30"></div>
         {/* Subtle grid pattern */}
-        <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-10 mix-blend-soft-light"></div>
+        <div
+          className="absolute inset-0 opacity-10 mix-blend-soft-light"
+          style={{ backgroundImage: `url(${gridPattern})` }}
+        ></div>
       </div>
 
       <div className="container mx-auto px-4 py-12 relative z-10">
         <InvestorAlert />
-        
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left Column */}
           <div>
+            {/* Hero Text & CTAs */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -98,12 +104,10 @@ const HeroSection = () => {
                   Where Markets Meet Opportunity
                 </span>
               </h1>
-              
               <p className="text-lg text-gray-200 mb-8 max-w-lg leading-relaxed">
-                Harness real-time market intelligence, sophisticated analytics, and institutional-grade trading tools. 
+                Harness real-time market intelligence, sophisticated analytics, and institutional-grade trading tools.
                 Our platform transforms complex market data into actionable insights for investors at every level.
               </p>
-              
               <div className="flex flex-wrap gap-4 mb-6">
                 <motion.button
                   className="px-8 py-4 rounded-xl bg-gradient-to-r from-red-600 to-amber-700 hover:from-red-700 hover:to-amber-800 transition-all shadow-lg shadow-red-900/30 flex items-center gap-2 group"
@@ -113,7 +117,6 @@ const HeroSection = () => {
                   <span>Start Trading Today</span>
                   <FiArrowUpRight className="group-hover:translate-x-1 transition-transform" />
                 </motion.button>
-                
                 <motion.button
                   className="px-8 py-4 rounded-xl border border-red-500/50 text-red-100 hover:bg-red-900/20 transition-all"
                   whileHover={{ scale: 1.05 }}
@@ -122,25 +125,22 @@ const HeroSection = () => {
                   Explore Investment Solutions
                 </motion.button>
               </div>
-              
-             
             </motion.div>
 
-            {/* Live Trades Section */}
-            <motion.div 
+            {/* Live Trades */}
+            <motion.div
               className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
             >
-              
               <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
                 {tradesData.map((trade) => (
-                  <motion.div 
+                  <motion.div
                     key={trade.id}
                     className={`p-4 rounded-xl flex justify-between items-center backdrop-blur-sm ${
-                      trade.type === 'Buy' 
-                        ? 'bg-green-900/20 border border-green-500/30' 
+                      trade.type === 'Buy'
+                        ? 'bg-green-900/20 border border-green-500/30'
                         : 'bg-red-900/20 border border-red-500/30'
                     }`}
                     initial={{ opacity: 0, y: 10 }}
@@ -163,10 +163,10 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right Column */}
+          {/* Right Column (Charts & Stocks) */}
           <div>
             {/* Chart Tabs */}
-            <motion.div 
+            <motion.div
               className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -188,7 +188,6 @@ const HeroSection = () => {
                     </button>
                   ))}
                 </div>
-                
                 <div className="flex space-x-2">
                   {['1h', '24h', '7d', '30d', '90d'].map((time) => (
                     <button
@@ -212,7 +211,7 @@ const HeroSection = () => {
                   <div className="h-full flex items-center justify-center">
                     <motion.div
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                       className="text-red-400"
                     >
                       <FiRefreshCw size={40} />
@@ -223,41 +222,36 @@ const HeroSection = () => {
                     <AreaChart data={btcData}>
                       <defs>
                         <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1}/>
+                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0.1} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
                       <XAxis dataKey="time" stroke="#94a3b8" />
                       <YAxis stroke="#94a3b8" domain={['auto', 'auto']} />
-                      <Tooltip 
-                        contentStyle={{ 
-                          background: '#1f2937', 
+                      <Tooltip
+                        contentStyle={{
+                          background: '#1f2937',
                           borderColor: '#ef4444',
                           borderRadius: '8px',
                           boxShadow: '0 4px 20px rgba(239, 68, 68, 0.25)'
-                        }} 
+                        }}
                         formatter={(value) => [`$${value.toLocaleString()}`, 'Price']}
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="price" 
-                        stroke="#ef4444" 
+                      <Area
+                        type="monotone"
+                        dataKey="price"
+                        stroke="#ef4444"
                         strokeWidth={3}
-                        fillOpacity={1} 
-                        fill="url(#colorPrice)" 
+                        fillOpacity={1}
+                        fill="url(#colorPrice)"
                         activeDot={{ r: 6, fill: '#dc2626' }}
                       />
                     </AreaChart>
                   </ResponsiveContainer>
                 )}
-                {/* {useMockData && (
-                  <div className="absolute top-4 right-4 bg-amber-500/90 text-black px-3 py-1 rounded-full text-xs font-bold">
-                    Using Mock Data
-                  </div>
-                )} */}
               </div>
-              
+
               {/* Price Info */}
               <div className="flex justify-between items-center mt-6">
                 <div>
@@ -281,7 +275,7 @@ const HeroSection = () => {
             </motion.div>
 
             {/* Stocks Section */}
-            <motion.div 
+            <motion.div
               className="bg-gray-900/60 backdrop-blur-sm rounded-xl p-6 border border-red-500/20 mt-8"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
@@ -301,7 +295,10 @@ const HeroSection = () => {
                   </thead>
                   <tbody>
                     {stocksData.map((stock) => (
-                      <tr key={stock.symbol} className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors">
+                      <tr
+                        key={stock.symbol}
+                        className="border-b border-gray-800 hover:bg-gray-800/50 transition-colors"
+                      >
                         <td className="py-3 font-bold">{stock.symbol}</td>
                         <td className="py-3 text-gray-300">{stock.name}</td>
                         <td className="py-3 text-right font-mono">${stock.price.toFixed(2)}</td>
@@ -319,11 +316,9 @@ const HeroSection = () => {
             </motion.div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );
-}
+};
 
 export default HeroSection;
