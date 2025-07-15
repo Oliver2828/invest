@@ -8,31 +8,45 @@ const Accounts = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-useEffect(() => {
-  const fetchAccounts = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/accounts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-      console.log("Response from backend:", response.data); // 👈 LOG IT
-      setAccounts(Array.isArray(response.data) ? response.data : []); // 👈 Ensure it's an array
-    } catch (error) {
-      console.error('Error fetching accounts:', error);
-      setAccounts([]); // prevent crashing if request fails
-    }
-  };
+        console.log('API response:', response.data);
 
-  fetchAccounts();
-}, []);
+        const rawUsers = Array.isArray(response.data) ? response.data : response.data.users;
 
-  const filteredAccounts = accounts.filter((account) =>
-    account.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    account.type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    account.balance?.toString().includes(searchTerm)
+        if (!Array.isArray(rawUsers)) {
+          console.error('Unexpected API response format:', response.data);
+          return;
+        }
+
+        const formatted = rawUsers.map(user => ({
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          dateRegistered: user.createdAt,
+          investmentType: user.accounts?.[0]?.type || 'N/A',
+        }));
+
+        setAccounts(formatted);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const filteredAccounts = accounts.filter((user) =>
+    user.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleSort = (key) => {
@@ -45,8 +59,8 @@ useEffect(() => {
 
   const sortedAccounts = [...filteredAccounts].sort((a, b) => {
     if (sortConfig.key) {
-      const aVal = a[sortConfig.key] ?? a.user?.[sortConfig.key];
-      const bVal = b[sortConfig.key] ?? b.user?.[sortConfig.key];
+      const aVal = a[sortConfig.key];
+      const bVal = b[sortConfig.key];
       if (aVal < bVal) return sortConfig.direction === 'ascending' ? -1 : 1;
       if (aVal > bVal) return sortConfig.direction === 'ascending' ? 1 : -1;
     }
@@ -65,22 +79,14 @@ useEffect(() => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
-  const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(amount);
-  };
-
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Investment Accounts</h1>
+        <h1 className="text-2xl font-bold mb-6">Registered Users</h1>
 
         <input
           type="text"
-          placeholder="Search by name, type, or balance..."
+          placeholder="Search by name or email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="mb-4 px-4 py-2 border border-gray-300 rounded-md w-full md:w-1/2"
@@ -90,25 +96,25 @@ useEffect(() => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('name')}>User</th>
-                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('type')}>Type</th>
-                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('balance')}>Balance</th>
-                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('createdAt')}>Created</th>
+                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('name')}>Name</th>
+                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('email')}>Email</th>
+                <th className="px-6 py-3 text-left">Investment Type</th>
+                <th className="px-6 py-3 text-left cursor-pointer" onClick={() => handleSort('dateRegistered')}>Date Registered</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
               {currentItems.length > 0 ? (
-                currentItems.map((account) => (
-                  <tr key={account._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4">{account.user?.name || 'N/A'}</td>
-                    <td className="px-6 py-4">{account.type}</td>
-                    <td className="px-6 py-4">{formatCurrency(account.balance)}</td>
-                    <td className="px-6 py-4">{formatDate(account.createdAt)}</td>
+                currentItems.map((user) => (
+                  <tr key={user.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4">{user.name}</td>
+                    <td className="px-6 py-4">{user.email}</td>
+                    <td className="px-6 py-4">{user.investmentType}</td>
+                    <td className="px-6 py-4">{formatDate(user.dateRegistered)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="px-6 py-4 text-center text-gray-500">No accounts found.</td>
+                  <td colSpan="4" className="px-6 py-4 text-center text-gray-500">No users found.</td>
                 </tr>
               )}
             </tbody>
