@@ -2,9 +2,20 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/src/assets/red.jpg" />
+
+    <!-- Favicon (put your favicon.ico or .png into /public/) -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>InvestNow</title>
+
+    <!-- Preload slider images -->
+    <link rel="preload" as="image" href="/images/fina.jpg" />
+    <link rel="preload" as="image" href="/images/trust.jpg" />
+    <link rel="preload" as="image" href="/images/cut.jpg" />
+
+    <!-- Preload hero background video -->
+    <link rel="preload" as="video" href="/inves.mp4" type="video/mp4" />
 
     <!-- Hide Google Translate UI -->
     <style>
@@ -23,7 +34,7 @@
     </style>
   </head>
   <body>
-    <!-- Google Translate container (hidden) -->
+    <!-- Hidden Google Translate container -->
     <div id="google_translate_element" style="display: none;"></div>
 
     <!-- React Root -->
@@ -31,31 +42,29 @@
     <script type="module" src="/src/main.jsx"></script>
 
     <!-- Google Translate Initialization -->
-    <!-- Google Translate container (hidden) -->
-<!-- Hidden Google Translate element -->
-<div id="google_translate_element" style="display: none;"></div>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,es,fr,de,zh',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          },
+          'google_translate_element'
+        );
+      }
+    </script>
+    <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-<script type="text/javascript">
-  function googleTranslateElementInit() {
-    new google.translate.TranslateElement({
-      pageLanguage: 'en',
-      includedLanguages: 'en,es,fr,de,zh',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-      autoDisplay: false
-    }, 'google_translate_element');
-  }
-</script>
-<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
-
-
-<script>
-  const savedLang = localStorage.getItem("forcedLanguage");
-  if (savedLang && savedLang !== "en") {
-    const cookieValue = `/en/${savedLang}`;
-    document.cookie = `googtrans=${cookieValue}; path=/`;
-    document.cookie = `googtrans=${cookieValue}; domain=${window.location.hostname}; path=/`;
-  }
-</script>
-
+    <!-- Persist forced language cookie -->
+    <script>
+      const savedLang = localStorage.getItem('forcedLanguage');
+      if (savedLang && savedLang !== 'en') {
+        const cookieValue = `/en/${savedLang}`;
+        document.cookie = `googtrans=${cookieValue}; path=/`;
+        document.cookie = `googtrans=${cookieValue}; domain=${window.location.hostname}; path=/`;
+      }
+    </script>
   </body>
 </html>

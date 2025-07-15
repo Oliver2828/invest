@@ -1,6 +1,8 @@
 // === src/components/about/HeroSlider.jsx ===
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+
+// Bundle‑import your assets so they get hashed and served correctly
 import finaImg from '../../assets/fina.jpg';
 import trustImg from '../../assets/trust.jpg';
 import cutImg from '../../assets/cut.jpg';
@@ -35,6 +37,15 @@ const HeroSlider = () => {
   const controls = useAnimation();
   const intervalRef = useRef(null);
 
+  // Preload images programmatically
+  useEffect(() => {
+    slides.forEach(slide => {
+      const img = new Image();
+      img.src = slide.bg;
+    });
+  }, []);
+
+  // Progress bar animation
   useEffect(() => {
     controls.set({ width: 0 });
     controls.start({
@@ -43,6 +54,7 @@ const HeroSlider = () => {
     });
   }, [currentIndex, controls]);
 
+  // Auto‑advance
   useEffect(() => {
     if (!paused) {
       intervalRef.current = setInterval(() => {
@@ -76,7 +88,7 @@ const HeroSlider = () => {
           {idx === currentIndex && (
             <motion.div
               className="absolute inset-0 bg-center bg-cover"
-              style={{ backgroundImage: `url(${slide.bg})` }}
+              style={{ backgroundImage: `url("${slide.bg}")` }}
               initial={{ scale: 1.1, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 1.1, opacity: 0 }}
