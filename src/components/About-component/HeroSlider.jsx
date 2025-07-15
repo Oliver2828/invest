@@ -1,26 +1,32 @@
 // === src/components/about/HeroSlider.jsx ===
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import finaImg from '../../assets/fina.jpg';
+import trustImg from '../../assets/trust.jpg';
+import cutImg from '../../assets/cut.jpg';
 
 const HeroSlider = () => {
   const slides = [
     {
       title: 'Your Financial Journey Starts Here',
-      description: 'We empower investors with innovative tools and personalized guidance to navigate markets confidently',
+      description:
+        'We empower investors with innovative tools and personalized guidance to navigate markets confidently',
       cta: 'Explore Investments',
-      bg: '/src/assets/fina.jpg'
+      bg: finaImg
     },
     {
       title: 'Trusted by Millions Worldwide',
-      description: 'Join our community of savvy investors growing their wealth through disciplined strategies',
+      description:
+        'Join our community of savvy investors growing their wealth through disciplined strategies',
       cta: 'Join Now',
-      bg: '/src/assets/trust.jpg'
+      bg: trustImg
     },
     {
       title: 'Cutting-Edge Investment Technology',
-      description: 'AI-powered insights combined with human expertise for smarter decisions',
+      description:
+        'AI-powered insights combined with human expertise for smarter decisions',
       cta: 'See How It Works',
-      bg: '/src/assets/cut.jpg'
+      bg: cutImg
     }
   ];
 
@@ -29,7 +35,6 @@ const HeroSlider = () => {
   const controls = useAnimation();
   const intervalRef = useRef(null);
 
-  // Kick off the progress‐bar animation whenever the slide changes:
   useEffect(() => {
     controls.set({ width: 0 });
     controls.start({
@@ -38,38 +43,22 @@ const HeroSlider = () => {
     });
   }, [currentIndex, controls]);
 
-  // setInterval for auto‑swipe
   useEffect(() => {
-    if (paused) return;
-    
-    intervalRef.current = setInterval(() => {
-      setCurrentIndex(i => (i + 1) % slides.length);
-    }, 5000);
-    
+    if (!paused) {
+      intervalRef.current = setInterval(() => {
+        setCurrentIndex(i => (i + 1) % slides.length);
+      }, 5000);
+    }
     return () => clearInterval(intervalRef.current);
   }, [paused, slides.length]);
 
-  // Swipe handlers
   const handleDragEnd = (e, info) => {
-    if (info.offset.x < -100) {
-      goToNext();
-    }
-    if (info.offset.x > 100) {
-      goToPrev();
-    }
+    if (info.offset.x < -100) setCurrentIndex(i => (i + 1) % slides.length);
+    if (info.offset.x > 100) setCurrentIndex(i => (i - 1 + slides.length) % slides.length);
   };
 
-  const goToNext = () => {
-    setCurrentIndex(i => (i + 1) % slides.length);
-    restartInterval();
-  };
-
-  const goToPrev = () => {
-    setCurrentIndex(i => (i - 1 + slides.length) % slides.length);
-    restartInterval();
-  };
-
-  const restartInterval = () => {
+  const goToIndex = idx => {
+    setCurrentIndex(idx);
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
       setCurrentIndex(i => (i + 1) % slides.length);
@@ -82,13 +71,12 @@ const HeroSlider = () => {
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      {/* Slides with parallax */}
-      {slides.map((s, idx) => (
+      {slides.map((slide, idx) => (
         <AnimatePresence key={idx} initial={false}>
           {idx === currentIndex && (
             <motion.div
               className="absolute inset-0 bg-center bg-cover"
-              style={{ backgroundImage: `url(${s.bg})` }}
+              style={{ backgroundImage: `url(${slide.bg})` }}
               initial={{ scale: 1.1, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 1.1, opacity: 0 }}
@@ -98,36 +86,9 @@ const HeroSlider = () => {
         </AnimatePresence>
       ))}
 
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/80" />
       <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
-      
-      {/* Navigation arrows */}
-      {/* <div className="absolute inset-y-0 left-0 flex items-center z-30">
-        <button 
-          onClick={goToPrev}
-          className="ml-4 p-3 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
-          aria-label="Previous slide"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-        </button>
-      </div>
-      
-      <div className="absolute inset-y-0 right-0 flex items-center z-30">
-        <button 
-          onClick={goToNext}
-          className="mr-4 p-3 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
-          aria-label="Next slide"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div> */}
 
-      {/* Content */}
       <div className="relative z-20 h-full flex flex-col justify-center items-start px-8 md:px-16 lg:px-24 text-white">
         <AnimatePresence mode="wait">
           <motion.div
@@ -139,13 +100,10 @@ const HeroSlider = () => {
             initial={{ x: 100, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -100, opacity: 0 }}
-            transition={{ 
-              duration: 0.8, 
-              ease: [0.16, 1, 0.3, 1] 
-            }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-2xl"
           >
-            <motion.h1 
+            <motion.h1
               className="text-4xl sm:text-5xl md:text-6xl font-bold mb-4 leading-tight"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -153,8 +111,7 @@ const HeroSlider = () => {
             >
               {slides[currentIndex].title}
             </motion.h1>
-            
-            <motion.p 
+            <motion.p
               className="text-xl md:text-2xl mb-8 opacity-90 max-w-xl"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -162,8 +119,7 @@ const HeroSlider = () => {
             >
               {slides[currentIndex].description}
             </motion.p>
-            
-            <motion.button 
+            <motion.button
               className="bg-gradient-to-r from-red-600 to-red-700 px-8 py-4 rounded-full font-bold drop-shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 group"
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -180,16 +136,13 @@ const HeroSlider = () => {
         </AnimatePresence>
       </div>
 
-      {/* Indicators & progress bar */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex items-center space-x-3 z-30">
         {slides.map((_, idx) => (
           <div key={idx} className="flex flex-col items-center">
             <button
-              onClick={() => setCurrentIndex(idx)}
+              onClick={() => goToIndex(idx)}
               className={`w-4 h-4 rounded-full cursor-pointer transition-all ${
-                currentIndex === idx
-                  ? 'scale-125 bg-white'
-                  : 'bg-white/50 hover:bg-white'
+                currentIndex === idx ? 'scale-125 bg-white' : 'bg-white/50 hover:bg-white'
               }`}
               aria-label={`Go to slide ${idx + 1}`}
             />
@@ -203,24 +156,6 @@ const HeroSlider = () => {
           </div>
         ))}
       </div>
-
-      {/* Pause/Play button */}
-      {/* <button
-        onClick={() => setPaused(!paused)}
-        className="absolute bottom-8 right-8 z-30 p-2 rounded-full bg-black/40 hover:bg-black/60 transition-colors"
-        aria-label={paused ? "Play slideshow" : "Pause slideshow"}
-      >
-        {paused ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-        )}
-      </button> */}
     </div>
   );
 };
