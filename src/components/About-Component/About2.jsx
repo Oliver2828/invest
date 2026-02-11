@@ -43,7 +43,7 @@ const About2 = () => {
 
           <div className="pt-4">
             <p className="text-lg font-medium text-gray-700 mb-6">
-              <span className="font-bold text-red-600">InvestNow</span> app will be available on iOS and Android soon.
+              <span className="font-bold text-red-600">Squarepay</span> app will be available on iOS and Android soon.
             </p>
 
             {/* Store Badges */}

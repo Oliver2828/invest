@@ -36,6 +36,8 @@ import Accounts from './components/AdDashboard-components/Accounts';
 import UpdateAccounts from './components/AdDashboard-components/UpdateAccounts';
 import DeactiveAccounts from './components/AdDashboard-components/DeactiveAccounts';
 import AdSimulationControl from './components/AdDashboard-components/AdminSimulationControl';
+import AdminPortfolioManagement from './components/AdDashboard-components/AdminPortfolioManagement';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
@@ -85,7 +87,7 @@ function AppContent() {
           <Route path="/faq" element={<FAQ />} />
 
           {/* Dashboard Routes */}
-          <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
             <Route index element={<DashboardHome />} />
             <Route path="portfolio" element={<Portfolio />} />
             <Route path="investments">
@@ -105,12 +107,13 @@ function AppContent() {
           </Route>
 
           {/* Admin Routes */}
-          <Route path="/admin" element={<AdDashboard />}>
+          <Route path="/admin" element={<ProtectedRoute adminOnly><AdDashboard /></ProtectedRoute>}>
             <Route index        element={<AdDashboardHome />} />
             <Route path="accounts" element={<Accounts />} />
             <Route path="update"   element={<UpdateAccounts />} />
             <Route path="deactive" element={<DeactiveAccounts />} />
             <Route path="simulation-control" element={<AdSimulationControl />} />
+            <Route path="portfolio-management" element={<AdminPortfolioManagement />} />
           </Route>
         </Routes>
       </main>

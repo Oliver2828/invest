@@ -42,6 +42,7 @@ const Login = () => {
           setSuccess('Login successful!');
           localStorage.setItem('userEmail', formData.email); // Save email for dashboard fetch
           localStorage.setItem('userRole', data.role); // Save role for later use
+          if (data.token) localStorage.setItem('token', data.token);
           setTimeout(() => {
             if (data.role === 'admin') {
               navigate('/admin');

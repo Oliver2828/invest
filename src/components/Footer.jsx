@@ -113,7 +113,7 @@ const Footer = () => {
                 <FiBriefcase className="text-xl" />
               </div>
               <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-red-200 to-red-100">
-                InvestNow
+                Squarepay
               </h2>
             </div>
             <p className="mb-6 text-red-100">
@@ -182,58 +182,7 @@ const Footer = () => {
           ))}
 
           {/* Contact column */}
-          <motion.div variants={itemVariants}>
-            <h3 className="text-lg font-bold mb-6 relative inline-block">
-              Contact Us
-              <motion.div 
-                className="absolute bottom-0 left-0 w-full h-0.5 bg-red-300"
-                initial={{ width: 0 }}
-                whileInView={{ width: "100%" }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-              />
-            </h3>
-            
-            <ul className="space-y-4 mb-6">
-              {contactInfo.map((item, index) => (
-                <motion.li 
-                  key={index} 
-                  className="flex items-start"
-                  variants={itemVariants}
-                >
-                  <span className="text-red-300 mt-1 mr-3">{item.icon}</span>
-                  <span className="text-red-100">{item.text}</span>
-                </motion.li>
-              ))}
-            </ul>
-            
-            <motion.div
-              variants={itemVariants}
-              className="mt-8"
-            >
-              <h4 className="font-medium mb-4 text-red-100">Stay Updated</h4>
-              <div className="flex">
-                <input 
-                  type="email" 
-                  placeholder="Your email address"
-                  className="px-4 py-2 w-full rounded-l-lg bg-red-800/50 text-white placeholder-red-300 focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-                <motion.button
-                  className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-700 rounded-r-lg font-medium"
-                  whileHover={{ 
-                    background: "linear-gradient(to right, #ef4444, #b91c1c)",
-                    scale: 1.02
-                  }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  Subscribe
-                </motion.button>
-              </div>
-              <p className="text-xs mt-2 text-red-200">
-                We respect your privacy. Unsubscribe at any time.
-              </p>
-            </motion.div>
-          </motion.div>
+          
         </motion.div>
       </div>
 
@@ -241,7 +190,7 @@ const Footer = () => {
       <div className="border-t border-red-800/50">
         <div className="container mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center">
           <p className="text-red-200 text-sm mb-4 md:mb-0">
-            &copy; {currentYear} InvestNow Financial Inc. All rights reserved.
+            &copy; {currentYear} Squarepay Financial Inc. All rights reserved.
           </p>
           
           <div className="flex space-x-6">

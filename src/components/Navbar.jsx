@@ -112,7 +112,7 @@ const Navbar = () => {
               <FiBriefcase size={20} />
             </motion.div>
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-red-200 to-red-100">
-              InvestNow
+              Squarepay
             </span>
           </Link>
         </motion.div>

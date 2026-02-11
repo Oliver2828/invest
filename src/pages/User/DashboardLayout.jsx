@@ -279,28 +279,11 @@ export default function DashboardLayout() {
 
   const menuItems = useMemo(
     () => [
-      { name: 'Dashboard', icon: FiHome, path: '/dashboard' },
+      { name: 'Wallet', icon: FiHome, path: '/dashboard' },
       { name: 'Portfolio', icon: FiPieChart, path: '/dashboard/portfolio' },
-      {
-        name: 'Investments',
-        icon: FiDollarSign,
-        submenu: [
-          { name: 'Active Investments', path: '/dashboard/investments/active' },
-        
-        ],
-      },
-      { name: 'Market Data', icon: FiTrendingUp, path: '/dashboard/market' },
-      { name: 'Security', icon: FiShield, path: '/dashboard/security' },
-      {
-        name: 'Settings',
-        icon: FiSettings,
-        submenu: [
-          { name: 'Profile', path: '/dashboard/settings/profile' },
-          { name: 'Notifications', path: '/dashboard/settings/notifications' },
-          { name: 'Statements', path: '/dashboard/settings/statements' },
-        ],
-      },
-      { name: 'Support', icon: FiHelpCircle, path: '/dashboard/support' },
+      
+      
+     
     ],
     []
   );

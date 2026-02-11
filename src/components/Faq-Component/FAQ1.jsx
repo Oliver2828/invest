@@ -12,11 +12,11 @@ const faqData = [
   {
     question: "What is investnow.com?",
     answer:
-      "investnow.com is a global investment firm that offers clients easy access to cryptocurrency, stocks, real estate, bonds, indices, and metaverse investment opportunities.",
+      "Squarepay is a global investment firm that offers clients easy access to cryptocurrency, stocks, real estate, bonds, indices, and metaverse investment opportunities.",
     icon: <FiHelpCircle className="text-red-500 text-xl" />,
   },
   {
-    question: "Is investnow.com regulated?",
+    question: "Is Squarepay regulated?",
     answer:
       "Yes, we follow strict compliance and security protocols across all regions we operate in. Our services are aligned with international financial regulations and we're licensed in over 30 jurisdictions.",
     icon: <FiLock className="text-red-500 text-xl" />,

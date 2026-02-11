@@ -5,10 +5,10 @@ export default function About3() {
     <div className="min-h-screen w-full bg-white px-6 py-10 md:px-24 md:py-20 text-[#333] font-sans flex flex-col md:flex-row gap-16">
       {/* Left Section - About InvestNow */}
       <div className="md:w-2/3 space-y-6">
-        <h2 className="text-xl font-bold text-[#1e1e1e]">About InvestNow</h2>
+        <h2 className="text-xl font-bold text-[#1e1e1e]">About Squarepay</h2>
 
         <p className="text-gray-700 leading-relaxed">
-          <span className="font-semibold text-[#1e1e1e]">InvestNow</span> is a global investment hedge
+          <span className="font-semibold text-[#1e1e1e]">Squarepay</span> is a global investment hedge
           fund offering clients access to a nimble and powerful
           platform for investing in cryptocurrencies, stocks, real
           estate, bonds, indices, metaverse, and shares.
@@ -21,7 +21,7 @@ export default function About3() {
         </p>
 
         <p className="text-gray-700 leading-relaxed">
-          InvestNow is more than a broker. It provides a
+          Squarepay is more than a broker. It provides a
           trusted investment ecosystem that enables clients to
           achieve their own success in a faster and simpler manner.
         </p>
@@ -29,7 +29,7 @@ export default function About3() {
         <p className="text-gray-700 leading-relaxed">
           Be empowered to better capitalise on winning market
           opportunities when you trade smarter with
-          <span className="text-[#1e1e1e] font-medium"> InvestNow</span>.
+          <span className="text-[#1e1e1e] font-medium"> Squarepay</span>.
         </p>
       </div>
 

@@ -9,7 +9,10 @@ const AdDashboardHome = () => {
   useEffect(() => {
     const fetchDashboard = async () => {
       try {
-        const { data } = await axios.get('/api/dashboard/admin-dashboard');
+        const token = localStorage.getItem('token');
+        const { data } = await axios.get('http://localhost:500/api/dashboard/admin-dashboard', {
+          headers: token ? { Authorization: `Bearer ${token}` } : {}
+        });
         setDashboardData(data);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);

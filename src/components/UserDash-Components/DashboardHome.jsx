@@ -9,9 +9,6 @@ import { motion, LayoutGroup } from 'framer-motion';
 
 const tabItems = [
   { id: 'overview', label: 'Overview', icon: <FiHome /> },
-  { id: 'accounts',  label: 'Accounts', icon: <FiCreditCard /> },
-  { id: 'invest',    label: 'Invest',   icon: <FiTrendingUp /> },
-  { id: 'reports',   label: 'Reports',  icon: <FiBarChart2 /> },
 ];
 
 const fadeUp = {
@@ -138,48 +135,19 @@ const DashboardHome = () => {
             activityLoading={activityLoading}
           />
         )}
-        {active === 'accounts' && (
-          <AccountsSection
-            formatCurrency={formatCurrency}
-            loading={loading}
-            savings={getAccount('savings')}
-            retirement={getAccount('retirement')}
-          />
-        )}
-        {active === 'invest'    && <InvestSection formatCurrency={formatCurrency} />}
-        {active === 'reports'   && <ReportsSection formatCurrency={formatCurrency} />}
       </div>
     </div>
   );
 };
 
-// Overview: Portfolio Value = savings, Today's Gain = retirement, Dividends = stocks
+// Overview: Calculate totals from all accounts
 const OverviewSection = ({ formatCurrency, loading, savings, retirement, stocks, recentActivity, activityLoading }) => {
+  // Calculate total portfolio value
+  const totalValue = (savings?.balance || 0) + (retirement?.balance || 0) + (stocks?.balance || 0);
+  
   const metrics = [
-    {
-      title: "Portfolio Value",
-      value: loading ? '...' : formatCurrency(savings?.balance || 0),
-      change: "+12.4%",
-      icon: <FiDollarSign />
-    },
-    {
-      title: "Today's Gain",
-      value: loading ? '...' : formatCurrency(retirement?.balance || 0),
-      change: "+3.2%",
-      icon: <FiTrendingUp />
-    },
-    {
-      title: "Dividends",
-      value: loading ? '...' : formatCurrency(stocks?.balance || 0),
-      change: "+8.1%",
-      icon: <FiCreditCard />
-    },
-    {
-      title: "Active Investments",
-      value: loading ? '...' : "7",
-      change: "+2",
-      icon: <FiPieChart />
-    },
+    
+  
   ];
 
   return (
@@ -201,94 +169,71 @@ const OverviewSection = ({ formatCurrency, loading, savings, retirement, stocks,
         ))}
       </motion.div>
 
-      <motion.div variants={fadeUp} custom={7} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <motion.div variants={fadeUp} custom={9} whileHover={{ scale: 1.02 }} className="bg-white rounded-2xl border border-red-100 shadow-sm p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Recent Activity</h2>
-          <div className="space-y-4">
-            {activityLoading ? (
-              <div className="text-gray-500">Loading...</div>
-            ) : recentActivity.length === 0 ? (
-              <div className="text-gray-500">No recent activity</div>
-            ) : (
-              recentActivity.map((act, i) => (
-                <motion.div key={act.id || i} variants={fadeUp} custom={i + 10} className="flex items-start pb-4 border-b border-red-50 last:border-0">
-                  <div className="bg-red-100 text-red-600 p-2 rounded-lg mr-4">
-                    <FiDollarSign />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between">
-                      <h3 className="font-medium text-gray-800">{act.action}</h3>
-                      <span className="font-medium">{formatCurrency(act.amount)}</span>
-                    </div>
-                    <p className="text-sm text-gray-600">{act.fund}</p>
-                    <p className="text-xs text-gray-500 mt-1">{act.date}</p>
-                  </div>
-                </motion.div>
-              ))
-            )}
+      {/* Wallet Section */}
+      <motion.div variants={fadeUp} custom={7} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Bitcoin Wallet */}
+        <motion.div variants={fadeUp} custom={7} whileHover={{ scale: 1.02 }} className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl border border-orange-200 shadow-sm p-6">
+          <div className="flex justify-between items-start mb-4">
+            <h3 className="text-lg font-bold text-gray-900">Bitcoin Wallet</h3>
+            <div className="bg-orange-100 text-orange-600 p-2 rounded-lg text-xl">₿</div>
+          </div>
+          <div className="space-y-3">
+            <div className="bg-white rounded-lg p-3 border border-orange-100">
+              <p className="text-gray-600 text-xs mb-2">Wallet Address</p>
+              <p className="text-gray-900 font-mono text-sm break-all">bc1qx89xp9qtjdufync8u72hjgjnsrhwyqp8c7h3ce</p>
+            </div>
+            <button className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-2 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+              Copy Address
+            </button>
           </div>
         </motion.div>
+
+        {/* Dollar Wallet */}
+        
+
+       
       </motion.div>
+
+      {/* Recent Activity removed per request */}
     </motion.div>
   );
 };
 
 
 
-// Accounts: Primary Investment = savings, Retirement Savings = retirement
+// Accounts: Display all user accounts from backend
 const AccountsSection = ({ formatCurrency, loading, savings, retirement }) => {
-  const accounts = [
-    {
-      id: 1,
-      name: "Primary Investment",
-      number: "**** 4832",
-      balance: loading ? 0 : (savings?.balance || 0),
-      growth: 12.4,
-      transactions: [
-        { id: 1, name: "Tech Growth Fund",    date: "May 15, 2023", amount: 2500.00, type: "investment" },
-        { id: 2, name: "Monthly Deposit",     date: "May 10, 2023", amount: 1500.00, type: "deposit" },
-        { id: 3, name: "Green Energy ETF",    date: "May 5, 2023",  amount: 3200.00, type: "investment" }
-      ],
-      color: "bg-gradient-to-br from-white to-red-50"
-    },
-    {
-      id: 2,
-      name: "Retirement Savings",
-      number: "**** 7194",
-      balance: loading ? 0 : (retirement?.balance || 0),
-      growth: 8.2,
-      transactions: [
-        { id: 1, name: "401k Contribution", date: "May 1, 2023", amount: 1250.00, type: "deposit" },
-        { id: 2, name: "Dividend Payment",  date: "Apr 28, 2023", amount: 345.25, type: "income" }
-      ],
-      color: "bg-gradient-to-br from-red-50 to-white"
-    }
-  ];
+  // Build accounts from backend data - use actual account objects
+  const allAccounts = [];
+  if (savings) allAccounts.push({ ...savings, name: "Savings Account", number: "**** 4832" });
+  if (retirement) allAccounts.push({ ...retirement, name: "Retirement Account", number: "**** 5921" });
 
   return (
     <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {accounts.map((acct, i) => (
-        <motion.div key={acct.id} variants={fadeUp} custom={i + 2} whileHover={{ scale: 1.02 }} className={`${acct.color} rounded-2xl border border-red-100 shadow-sm overflow-hidden`}>
-          <div className="p-6 border-b border-red-100">
-            <div className="flex justify-between items-start">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{acct.name}</h2>
-                <p className="text-gray-500 text-sm">{acct.number}</p>
-              </div>
-              <div className="bg-white text-red-600 text-xs font-bold px-3 py-1 rounded-full flex items-center border border-red-100">
-                <FiTrendingUp className="mr-1" /> +{acct.growth}%
-              </div>
-            </div>
-            <div className="mt-4">
-              <p className="text-3xl font-bold text-gray-900">{loading ? '...' : formatCurrency(acct.balance)}</p>
-              <p className="text-green-600 font-medium flex items-center mt-1">
-                <FiArrowUpRight className="mr-1" />
-                {loading ? '...' : formatCurrency(acct.balance * acct.growth / 100)} growth
-              </p>
-            </div>
-          </div>
+      {allAccounts.length === 0 ? (
+        <motion.div variants={fadeUp} custom={2} className="col-span-full text-center text-gray-500 py-8">
+          {loading ? "Loading accounts..." : "No accounts found"}
         </motion.div>
-      ))}
+      ) : (
+        allAccounts.map((acct, i) => (
+          <motion.div key={acct.type || i} variants={fadeUp} custom={i + 2} whileHover={{ scale: 1.02 }} className={`bg-gradient-to-br from-white to-red-50 rounded-2xl border border-red-100 shadow-sm overflow-hidden`}>
+            <div className="p-6 border-b border-red-100">
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900">{acct.name || acct.type}</h2>
+                  <p className="text-gray-500 text-sm">{acct.number || ""}</p>
+                </div>
+                <div className="bg-white text-red-600 text-xs font-bold px-3 py-1 rounded-full flex items-center border border-red-100">
+                  <FiTrendingUp className="mr-1" /> Growth
+                </div>
+              </div>
+              <div className="mt-4">
+                <p className="text-3xl font-bold text-gray-900">{loading ? '...' : formatCurrency(acct.balance || 0)}</p>
+              </div>
+            </div>
+          </motion.div>
+        ))
+      )}
     </motion.div>
   );
 };
@@ -348,53 +293,6 @@ const InvestSection = ({ formatCurrency }) => {
   );
 };
 
-const ReportsSection = ({ formatCurrency }) => {
-  const reports = [
-    { id: 1, name: "Monthly Statement",  date: "May 2023" },
-    { id: 2, name: "Tax Summary",        date: "2022 Fiscal Year" },
-    { id: 3, name: "Portfolio Analysis", date: "Q1 2023" },
-    { id: 4, name: "Performance Report", date: "April 2023" }
-  ];
 
-  return (
-    <motion.div initial="hidden" animate="visible" custom={1} variants={fadeUp} className="space-y-6">
-      <motion.div variants={fadeUp} custom={2} className="bg-white rounded-2xl border border-red-100 shadow-sm p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">Financial Reports</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {reports.map((rep, i) => (
-            <motion.div key={rep.id} variants={fadeUp} custom={i + 3} whileHover={{ scale: 1.02 }} className="border border-red-100 rounded-xl p-4 flex items-start">
-              <div className="bg-red-100 w-10 h-10 rounded-full flex items-center justify-center mr-4">
-                <FiFileText className="text-red-600" />
-              </div>
-              <div>
-                <h3 className="font-bold text-gray-800">{rep.name}</h3>
-                <p className="text-sm text-gray-600">{rep.date}</p>
-                <motion.button whileHover={{ x: 4 }} className="mt-2 text-red-600 text-sm font-medium inline-flex items-center">
-                  Download <FiArrowDownRight className="ml-1" />
-                </motion.button>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      <motion.div variants={fadeUp} custom={8} className="bg-white rounded-2xl border border-red-100 shadow-sm p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Performance Summary</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {[
-            { label: "Total Value", value: formatCurrency(42689.50) },
-            { label: "YTD Growth",  value: "+18.7%" },
-            { label: "Dividends",   value: formatCurrency(1450.25) }
-          ].map((item, i) => (
-            <motion.div key={i} variants={fadeUp} custom={i + 9} whileHover={{ scale: 1.02 }} className="bg-gradient-to-r from-red-50 to-white p-4 rounded-xl border border-red-100">
-              <div className="text-gray-500">{item.label}</div>
-              <div className="text-2xl font-bold">{item.value}</div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-};
 
 export default DashboardHome;

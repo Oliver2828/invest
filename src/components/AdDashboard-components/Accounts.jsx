@@ -12,7 +12,7 @@ const Accounts = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users`, {
+        const response = await axios.get('http://localhost:500/api/users', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
